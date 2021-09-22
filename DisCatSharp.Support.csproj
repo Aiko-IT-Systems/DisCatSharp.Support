@@ -43,4 +43,14 @@
     <EditorConfigFiles Remove="C:\Users\pkmor\source\GitHub\DisCatSharp.Support\.editorconfig" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Providers\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="config.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
