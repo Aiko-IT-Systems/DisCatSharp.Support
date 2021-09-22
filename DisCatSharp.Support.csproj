@@ -12,6 +12,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove=".editorconfig" />
+    <None Remove=".gitignore" />
+    <None Remove="CODE_OF_CONDUCT.md" />
+    <None Remove="CONTRIBUTING.md" />
+    <None Remove="LICENSE" />
+    <None Remove="README.md" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="DisCatSharp" Version="9.8.3-nightly-00122" />
     <PackageReference Include="DisCatSharp.ApplicationCommands" Version="9.8.3-nightly-00122" />
     <PackageReference Include="DisCatSharp.CommandsNext" Version="9.8.3-nightly-00122" />
@@ -20,6 +29,18 @@
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="SSH.NET" Version="2020.0.1" />
     <PackageReference Include="Stwalkerster.SharphConduit" Version="0.1.3-alpha" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EditorConfigFiles Remove="C:\Users\pkmor\source\GitHub\DisCatSharp.Support\.editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EditorConfigFiles Remove="C:\Users\pkmor\source\GitHub\DisCatSharp.Support\.editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EditorConfigFiles Remove="C:\Users\pkmor\source\GitHub\DisCatSharp.Support\.editorconfig" />
   </ItemGroup>
 
 </Project>
