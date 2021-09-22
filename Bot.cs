@@ -318,14 +318,14 @@ namespace DisCatSharp.Support
         /// </summary>
         private static void RegisterCommands()
         {
-            Type commandModule = typeof(BaseCommandModule);
+            /*Type commandModule = typeof(BaseCommandModule);
             var commands = Assembly.GetExecutingAssembly().GetTypes().Where(t => commandModule.IsAssignableFrom(t) && !t.IsNested).ToList();
 
             foreach (var command in commands)
             {
                 CommandsNextExtension.RegisterCommands(command);
             }
-
+            */
             Type applicationCommandModule = typeof(ApplicationCommandsModule);
             var applicationCommands = Assembly.GetExecutingAssembly().GetTypes().Where(t => applicationCommandModule.IsAssignableFrom(t) && !t.IsNested).ToList();
 
