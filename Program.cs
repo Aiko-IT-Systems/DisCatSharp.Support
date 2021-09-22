@@ -8,12 +8,12 @@ namespace DisCatSharp.Support
     /// <summary>
     /// The program.
     /// </summary>
-    class Program
+    public class Program
     {
         /// <summary>
         /// The main entry point.
         /// </summary>
-        static void Main()
+        public static void Main()
         {
             Console.ForegroundColor = ConsoleColor.Magenta;
             Console.WriteLine($"{"".PadRight(Console.WindowWidth - 2, '█')}");
@@ -24,7 +24,7 @@ namespace DisCatSharp.Support
             Console.ResetColor();
 
             var bot = new Bot(LogLevel.Debug);
-            bot.StartAsync().Wait();
+            bot.RunAsync().Wait();
 
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"{"".PadRight(Console.WindowWidth - 2, '█')}");
@@ -43,7 +43,7 @@ namespace DisCatSharp.Support
         /// Centers the console.
         /// </summary>
         /// <param name="s">The text.</param>
-        static void Center(string s)
+        public static void Center(string s)
         {
             try
             {

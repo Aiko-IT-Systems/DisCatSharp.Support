@@ -110,17 +110,24 @@ namespace DisCatSharp.Support
             SetupConfigs();
             SetupClients();
             //RegisterEvents();
-            //RegisterCommands();
+            RegisterCommands();
 
         }
 
         /// <summary>
         /// Starts the bot.
         /// </summary>
-        public async Task StartAsync()
+        public async Task RunAsync()
         {
             await DiscordClient.ConnectAsync();
-            await Task.Delay(15000);
+            Center(" ");
+            Center($"Logged in as {DiscordClient.CurrentUser.UsernameWithDiscriminator} with prefix {Config.DiscordConfig.Prefix}");
+            Center(" ");
+            while (!ShutdownRequest.IsCancellationRequested)
+            {
+                await Task.Delay(2000);
+            }
+            await DiscordClient.UpdateStatusAsync(activity: null, userStatus: UserStatus.Offline, idleSince: null);
             await DiscordClient.DisconnectAsync();
             DerigisterEvents();
             Dispose();
@@ -361,6 +368,30 @@ namespace DisCatSharp.Support
 
             ConduitClient = null;
             DiscordClient = null;
+        }
+
+        /// <summary>
+        /// Centers the console.
+        /// </summary>
+        /// <param name="s">The text.</param>
+        public static void Center(string s)
+        {
+            try
+            {
+                Console.Write("██");
+                Console.SetCursorPosition((Console.WindowWidth - s.Length) / 2, Console.CursorTop);
+                Console.Write(s);
+                Console.SetCursorPosition((Console.WindowWidth - 4), Console.CursorTop);
+                Console.WriteLine("██");
+            }
+            catch (Exception)
+            {
+                s = "Console to smoll EXC";
+                Console.SetCursorPosition((Console.WindowWidth - s.Length) / 2, Console.CursorTop);
+                Console.Write(s);
+                Console.SetCursorPosition((Console.WindowWidth - 4), Console.CursorTop);
+                Console.WriteLine("██");
+            }
         }
     }
 }
