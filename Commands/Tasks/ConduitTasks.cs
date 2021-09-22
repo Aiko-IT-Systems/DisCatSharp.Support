@@ -26,8 +26,8 @@ namespace DisCatSharp.Support.Commands.Tasks
         /// <returns>The url of the added task.</returns>
         [SlashCommand("task", "Add a task")]
         public static async Task AddTaskAsync(InteractionContext ctx, 
-            [ChoiceProvider(typeof(IConduitTaskTypeProvider)), Option("type", "Type")] string type,
-            [ChoiceProvider(typeof(IConduitTaskPriorityProvider)), Option("priority", "Priority")] string priority,
+            [ChoiceProvider(typeof(ConduitTaskTypeProvider)), Option("type", "Type")] string type,
+            [ChoiceProvider(typeof(ConduitTaskPriorityProvider)), Option("priority", "Priority")] string priority,
             [Option("title", "Title")] string title,
             [Option("description", "Description")] string description)
         {

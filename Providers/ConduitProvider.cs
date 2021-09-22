@@ -13,13 +13,13 @@ namespace DisCatSharp.Support.Providers
     /// <summary>
     /// The conduit task priority provider.
     /// </summary>
-    internal interface IConduitTaskPriorityProvider : IChoiceProvider
+    internal class ConduitTaskPriorityProvider : IChoiceProvider
     {
         /// <summary>
         /// Provides the priority choices.
         /// </summary>
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
-        public new async Task<IEnumerable<DiscordApplicationCommandOptionChoice>> Provider()
+        public async Task<IEnumerable<DiscordApplicationCommandOptionChoice>> Provider()
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
             return new DiscordApplicationCommandOptionChoice[]
@@ -37,13 +37,13 @@ namespace DisCatSharp.Support.Providers
     /// <summary>
     /// The conduit task type provider.
     /// </summary>
-    internal interface IConduitTaskTypeProvider : IChoiceProvider
+    internal class ConduitTaskTypeProvider : IChoiceProvider
     {
         /// <summary>
         /// Provides the type choices.
         /// </summary>
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
-        public new async Task<IEnumerable<DiscordApplicationCommandOptionChoice>> Provider()
+        public async Task<IEnumerable<DiscordApplicationCommandOptionChoice>> Provider()
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
             return new DiscordApplicationCommandOptionChoice[]
