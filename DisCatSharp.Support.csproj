@@ -3,6 +3,23 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
+    <StartupObject>DisCatSharp.Support.Program</StartupObject>
+    <ApplicationIcon>facivon.ico</ApplicationIcon>
   </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702;NU1701</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DisCatSharp" Version="9.8.3-nightly-00122" />
+    <PackageReference Include="DisCatSharp.ApplicationCommands" Version="9.8.3-nightly-00122" />
+    <PackageReference Include="DisCatSharp.CommandsNext" Version="9.8.3-nightly-00122" />
+    <PackageReference Include="DisCatSharp.Interactivity" Version="9.8.3-nightly-00122" />
+    <PackageReference Include="MySql.Data" Version="8.0.26" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="SSH.NET" Version="2020.0.1" />
+    <PackageReference Include="Stwalkerster.SharphConduit" Version="0.1.3-alpha" />
+  </ItemGroup>
 
 </Project>

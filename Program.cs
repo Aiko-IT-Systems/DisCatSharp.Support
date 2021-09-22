@@ -2,9 +2,15 @@
 
 namespace DisCatSharp.Support
 {
+    /// <summary>
+    /// The program.
+    /// </summary>
     class Program
     {
-        static void Main(string[] args)
+        /// <summary>
+        /// The main entry point.
+        /// </summary>
+        static void Main()
         {
             Console.WriteLine("Hello World!");
         }
