@@ -2,17 +2,31 @@
   "bot_token": "",
   "database": {
     "host": "",
+    "user": "",
     "password": "",
     "db": ""
   },
   "conduit": {
     "token": "",
-    "host": ""
+    "host": "",
+    "projects": [
+      ""
+    ],
+    "subscribers": [
+      ""
+    ]
   }
   "guild_ac": {
-    "guild_name": {
+    "dcs": {
+      "id": null,
       "roles": [
         "",
+        ""
+      ]
+    },
+    "dcs_dev": {
+      "id": null,
+      "roles": [
         ""
       ]
     }
