@@ -13,7 +13,7 @@ namespace DisCatSharp.Support.Commands.Tasks
     /// The conduit tasks.
     /// </summary>
     [SlashCommandGroup("tasks", "Tasks management for bugs.aitsys.dev", false)]
-    public partial  class ConduitTasks : ApplicationCommandsModule
+    public partial class ConduitTasks : ApplicationCommandsModule
     {
         /// <summary>
         /// Adds a task to https://bugs.aitsys.dev.
