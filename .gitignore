@@ -110,4 +110,4 @@ $RECYCLE.BIN/
 
 obj/
 bin/
-config.ini
+config.json

@@ -1,0 +1,20 @@
+{
+  "bot_token": "",
+  "database": {
+    "host": "",
+    "password": "",
+    "db": ""
+  },
+  "conduit": {
+    "token": "",
+    "host": ""
+  }
+  "guild_ac": {
+    "guild_name": {
+      "roles": [
+        "",
+        ""
+      ]
+    }
+  }
+}
