@@ -319,7 +319,7 @@ namespace DisCatSharp.Support
                 CommandsNextExtension.RegisterCommands(command);
             }
 
-            Type applicationCommandModule = typeof(BaseCommandModule);
+            Type applicationCommandModule = typeof(ApplicationCommandsModule);
             var applicationCommands = Assembly.GetExecutingAssembly().GetTypes().Where(t => applicationCommandModule.IsAssignableFrom(t) && !t.IsNested).ToList();
 
             foreach (var command in applicationCommands)
