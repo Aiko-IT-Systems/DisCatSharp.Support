@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace DisCatSharp.Support.Entities
+namespace DisCatSharp.Support.Entities.Config
 {
     /// <summary>
     /// The database config.

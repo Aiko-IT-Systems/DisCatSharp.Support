@@ -24,16 +24,18 @@ namespace DisCatSharp.Support
             Console.ResetColor();
 
             var bot = new Bot(LogLevel.Debug);
-
+            bot.StartAsync().Wait();
 
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"{"".PadRight(Console.WindowWidth - 2, '█')}");
             Center(" ");
             Center($"Shutdown of {Assembly.GetExecutingAssembly().FullName.Split(",")[0]} successfull");
             Center(" ");
+            Center($"Press any key to exit the aplication..");
+            Center(" ");
             Console.WriteLine($"{"".PadRight(Console.WindowWidth - 2, '█')}");
             Console.ResetColor();
-            Console.ReadKey();
+            Console.ReadKey(true);
             Environment.Exit(0);
         }
 

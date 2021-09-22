@@ -1,11 +1,11 @@
 ﻿using Newtonsoft.Json;
 
-namespace DisCatSharp.Support.Entities
+namespace DisCatSharp.Support.Entities.Config
 {
     /// <summary>
-    /// The config.
+    /// The discord config.
     /// </summary>
-    public partial class Config
+    public partial class DiscordConfig
     {
         /// <summary>
         /// Gets or sets the bot token.
@@ -14,21 +14,16 @@ namespace DisCatSharp.Support.Entities
         public string BotToken { get; set; }
 
         /// <summary>
-        /// Gets or sets the database config.
+        /// Gets or sets the prefix.
         /// </summary>
-        [JsonProperty("database")]
-        public DatabaseConfig DatabaseConfig { get; set; }
-
-        /// <summary>
-        /// Gets or sets the phabricator conduit config.
-        /// </summary>
-        [JsonProperty("conduit")]
-        public ConduitConfig ConduitConfig { get; set; }
+        [JsonProperty("prefix")]
+        public string Prefix { get; set; }
 
         /// <summary>
         /// Gets or sets the guild application command config.
         /// </summary>
         [JsonProperty("guild_ac")]
         public ApplicationCommandConfig ApplicationCommandConfig { get; set; }
+
     }
 }

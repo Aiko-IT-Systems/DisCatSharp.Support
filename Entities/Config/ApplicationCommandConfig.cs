@@ -2,7 +2,7 @@
 
 using System.Collections.Generic;
 
-namespace DisCatSharp.Support.Entities
+namespace DisCatSharp.Support.Entities.Config
 {
     /// <summary>
     /// The application command config.

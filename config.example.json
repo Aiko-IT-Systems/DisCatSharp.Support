@@ -1,5 +1,23 @@
 {
-  "bot_token": "",
+  "discord": {
+    "bot_token": "",
+    "prefix": "",
+    "guild_ac": {
+      "dcs": {
+        "id": null,
+        "roles": [
+          "",
+          ""
+        ]
+      },
+      "dcs_dev": {
+        "id": null,
+        "roles": [
+          ""
+        ]
+      }
+    }
+  },
   "database": {
     "host": "",
     "user": "",
@@ -15,20 +33,5 @@
     "subscribers": [
       ""
     ]
-  },
-  "guild_ac": {
-    "dcs": {
-      "id": null,
-      "roles": [
-        "",
-        ""
-      ]
-    },
-    "dcs_dev": {
-      "id": null,
-      "roles": [
-        ""
-      ]
-    }
   }
 }
