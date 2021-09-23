@@ -28,10 +28,9 @@ namespace DisCatSharp.Support.Entities.Phabricator
             this.Builder = new();
             this.Builder.WithTitle(Formatter.Bold(source.Title));
             this.Builder.WithUrl($"{Bot.Config.ConduitConfig.ApiHost}T{source.Identifier}");
-            if (source.Description != null)
-                this.Builder.WithDescription(source.Description.Replace("lang=", ""));
-            this.Builder.AddField("Status", source.Status ?? "unkown");
-            this.Builder.AddField("Priority", source.Priority ?? "unkown");
+            this.Builder.WithDescription(source.Description != null ? source.Description.Replace("lang=", "") : "none");
+            this.Builder.AddField("Status", source.StatusName ?? "unkown");
+            this.Builder.AddField("Priority", source.PriorityName ?? "unkown");
             this.Builder.AddField("Created", Formatter.Timestamp(source.DateCreated, TimestampFormat.RelativeTime));
             this.Builder.AddField("Last modified", Formatter.Timestamp(source.DateModified, TimestampFormat.RelativeTime));
             this.Builder.Color = source.Status switch

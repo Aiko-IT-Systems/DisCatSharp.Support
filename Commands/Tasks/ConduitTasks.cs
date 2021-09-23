@@ -43,7 +43,7 @@ namespace DisCatSharp.Support.Commands.Tasks
                 {
                     Title = $"{type} {title}",
                     Description = description,
-                    Priority = priority,
+                    Priority = Convert.ToInt32(priority),
                     EditPolicy = Bot.Config.ConduitConfig.Subscribers[0]
 
                 };
@@ -153,7 +153,7 @@ namespace DisCatSharp.Support.Commands.Tasks
 
                 await ctx.DeleteFollowupAsync(prio_select.Id);
 
-                var priority = prio_request.Result.Values[0];
+                var priority = Convert.ToInt32(prio_request.Result.Values[0]);
 
                 var title_response = await ctx.FollowUpAsync(new DiscordFollowupMessageBuilder().WithContent("What's the title of the task?"));
 

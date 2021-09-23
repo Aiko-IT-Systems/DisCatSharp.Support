@@ -25,7 +25,7 @@
     <PackageReference Include="DisCatSharp.ApplicationCommands" Version="9.8.3-nightly-00122" />
     <PackageReference Include="DisCatSharp.CommandsNext" Version="9.8.3-nightly-00122" />
     <PackageReference Include="DisCatSharp.Interactivity" Version="9.8.3-nightly-00122" />
-    <PackageReference Include="DisCatSharp.Phabricator" Version="1.0.0" />
+    <PackageReference Include="DisCatSharp.Phabricator" Version="1.0.3" />
     <PackageReference Include="MySql.Data" Version="8.0.26" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Serilog" Version="2.11.0-dev-01371" />

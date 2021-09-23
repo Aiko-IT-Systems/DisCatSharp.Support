@@ -21,12 +21,12 @@ namespace DisCatSharp.Support.Providers
         {
             return new DiscordApplicationCommandOptionChoice[]
             {
-                    new DiscordApplicationCommandOptionChoice("Unbreak now!", "unbreak"),
-                    new DiscordApplicationCommandOptionChoice("Triage", "triage"),
+                    new DiscordApplicationCommandOptionChoice("Unbreak now!", "100"),
+                    new DiscordApplicationCommandOptionChoice("Triage", "80"),
                     new DiscordApplicationCommandOptionChoice("High", "high"),
-                    new DiscordApplicationCommandOptionChoice("Normal", "normal"),
-                    new DiscordApplicationCommandOptionChoice("Low", "low"),
-                    new DiscordApplicationCommandOptionChoice("Wishlist", "wish")
+                    new DiscordApplicationCommandOptionChoice("Normal", "50"),
+                    new DiscordApplicationCommandOptionChoice("Low", "25"),
+                    new DiscordApplicationCommandOptionChoice("Wishlist", "0")
             };
         }
     }
@@ -43,12 +43,12 @@ namespace DisCatSharp.Support.Providers
         {
             return new DiscordSelectComponentOption[]
             {
-                    new DiscordSelectComponentOption("Unbreak now!", "unbreak", null, false),
-                    new DiscordSelectComponentOption("Triage", "triage", null, false),
-                    new DiscordSelectComponentOption("High", "high", null, false),
-                    new DiscordSelectComponentOption("Normal", "normal", null, true),
-                    new DiscordSelectComponentOption("Low", "low", null, false),
-                    new DiscordSelectComponentOption("Wishlist", "wish", null, false)
+                    new DiscordSelectComponentOption("Unbreak now!", "100", null, false),
+                    new DiscordSelectComponentOption("Needs Triage", "90", null, false),
+                    new DiscordSelectComponentOption("High", "80", null, false),
+                    new DiscordSelectComponentOption("Normal", "50", null, true),
+                    new DiscordSelectComponentOption("Low", "25", null, false),
+                    new DiscordSelectComponentOption("Wishlist", "0", null, false)
             };
         }
     }
