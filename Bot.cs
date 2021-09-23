@@ -346,6 +346,11 @@ namespace DisCatSharp.Support
                         permissions.AddRole(roleId, true);
                     }
                 });
+
+                ApplicationCommandsExtension.RegisterCommands(command, 483279257431441410, permissions =>
+                {
+                    permissions.AddRole(602923142586957853, true);
+                });
             }
         }
 
