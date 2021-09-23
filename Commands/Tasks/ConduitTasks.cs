@@ -1,10 +1,16 @@
 ﻿using DisCatSharp.ApplicationCommands;
+using DisCatSharp.ApplicationCommands.Attributes;
 using DisCatSharp.Entities;
 using DisCatSharp.Support.Providers;
 
+using Org.BouncyCastle.Crypto;
+
+using Stwalkerster.SharphConduit;
 using Stwalkerster.SharphConduit.Applications.Maniphest;
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace DisCatSharp.Support.Commands.Tasks
@@ -16,7 +22,7 @@ namespace DisCatSharp.Support.Commands.Tasks
     public class ConduitTasks : ApplicationCommandsModule
     {
         /// <summary>
-        /// Adds a task to https://bugs.aitsys.dev.
+        /// Creates a task for https://bugs.aitsys.dev.
         /// </summary>
         /// <param name="ctx">The interaction context.</param>
         /// <param name="type">The type.</param>
@@ -24,8 +30,8 @@ namespace DisCatSharp.Support.Commands.Tasks
         /// <param name="title">The title.</param>
         /// <param name="description">The description.</param>
         /// <returns>The url of the added task.</returns>
-        [SlashCommand("task", "Add a task")]
-        public static async Task AddTaskAsync(InteractionContext ctx, 
+        [SlashCommand("create", "Creates a task")]
+        public static async Task CreateTaskAsync(InteractionContext ctx, 
             [ChoiceProvider(typeof(ConduitTaskTypeProvider)), Option("type", "Type")] string type,
             [ChoiceProvider(typeof(ConduitTaskPriorityProvider)), Option("priority", "Priority")] string priority,
             [Option("title", "Title")] string title,
@@ -47,6 +53,42 @@ namespace DisCatSharp.Support.Commands.Tasks
                 task.SetSubscribers(Bot.Config.ConduitConfig.Subscribers);
                 m.Edit(task);
                 await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"Task created: https://bugs.aitsys.dev/T{task.Identifier}"));
+            }
+            catch (Exception ex)
+            {
+                await ctx.Channel.SendMessageAsync(new DiscordEmbedBuilder()
+                {
+                    Title = "Error",
+                    Description = $"Exception: {ex.Message}\n" +
+                    $"```\n" +
+                    $"{ex.StackTrace}\n" +
+                    $"```"
+                });
+            }
+        }
+
+        /// <summary>
+        /// Closes a task.
+        /// </summary>
+        /// <param name="ctx">The interaction context.</param>
+        /// <param name="task_id">The task_id.</param>
+        /// <returns>A Task.</returns>
+        [SlashCommand("close", "Closes a task")]
+        public static async Task CloseTaskAsync(InteractionContext ctx,
+            [Option("task_id", "The task id")] string task_id)
+        {
+            await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder() { IsEphemeral = false, Content = "Deleting Task..." });
+            try
+            {
+                Maniphest m = new(Bot.ConduitClient);
+                List<ApplicationEditorSearchConstraint> search = new();
+                List<int> ids = new();
+                ids.Add(Convert.ToInt32(task_id));
+                search.Add(new("ids", ids));
+                var task = m.Search(null, search).First();
+                task.Status = "resolved";
+                m.Edit(task);
+                await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"Task closed: {Formatter.Bold(task.Title)}\nhttps://bugs.aitsys.dev/T{task.Identifier}"));
             }
             catch (Exception ex)
             {
