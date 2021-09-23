@@ -7,6 +7,7 @@ using DisCatSharp.Interactivity.Enums;
 using DisCatSharp.Interactivity.EventHandling;
 using DisCatSharp.Interactivity.Extensions;
 using DisCatSharp.Support.Entities.Config;
+using DisCatSharp.Support.Events.Discord;
 
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
@@ -109,7 +110,7 @@ namespace DisCatSharp.Support
             LogLevel = logLevel;
             SetupConfigs();
             SetupClients();
-            //RegisterEvents();
+            RegisterEvents();
             RegisterCommands();
 
         }
@@ -129,7 +130,7 @@ namespace DisCatSharp.Support
             }
             await DiscordClient.UpdateStatusAsync(activity: null, userStatus: UserStatus.Offline, idleSince: null);
             await DiscordClient.DisconnectAsync();
-            DerigisterEvents();
+            DeregisterEvents();
             Dispose();
         }
 
@@ -237,8 +238,8 @@ namespace DisCatSharp.Support
             DiscordClient.GuildCreated += Client_GuildCreated;
             DiscordClient.GuildUpdated += Client_GuildUpdated;
             DiscordClient.GuildDeleted += Client_GuildDeleted;
-
-            DiscordClient.MessageCreated += Client_MessageCreated;
+            */
+            DiscordClient.MessageCreated += async (sender, args) => await Task.FromResult(MessageEvents.Client_MessageCreated(sender, args));/*
             DiscordClient.MessageReactionAdded += Client_MessageReactionAdded;
 
             DiscordClient.GuildMemberAdded += Client_GuildMemberAdded;
@@ -264,9 +265,9 @@ namespace DisCatSharp.Support
         }
 
         /// <summary>
-        /// Derigisters the events.
+        /// Deregisters the events.
         /// </summary>
-        private static void DerigisterEvents()
+        private static void DeregisterEvents()
         {/*
             DiscordClient.Ready -= Client_Ready;
             DiscordClient.Resumed -= Client_Resumed;
@@ -286,8 +287,8 @@ namespace DisCatSharp.Support
             DiscordClient.GuildCreated -= Client_GuildCreated;
             DiscordClient.GuildUpdated -= Client_GuildUpdated;
             DiscordClient.GuildDeleted -= Client_GuildDeleted;
-
-            DiscordClient.MessageCreated -= Client_MessageCreated;
+            */
+            DiscordClient.MessageCreated -= MessageEvents.Client_MessageCreated;/*
             DiscordClient.MessageReactionAdded -= Client_MessageReactionAdded;
 
             DiscordClient.GuildMemberAdded -= Client_GuildMemberAdded;
