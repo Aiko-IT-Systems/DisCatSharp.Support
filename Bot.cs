@@ -6,17 +6,15 @@ using DisCatSharp.Interactivity;
 using DisCatSharp.Interactivity.Enums;
 using DisCatSharp.Interactivity.EventHandling;
 using DisCatSharp.Interactivity.Extensions;
+using DisCatSharp.Phabricator;
 using DisCatSharp.Support.Entities.Config;
 using DisCatSharp.Support.Events.Discord;
 
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.DependencyInjection;
 
 using Newtonsoft.Json;
 
 using Serilog;
-
-using Stwalkerster.SharphConduit;
 
 using System;
 using System.IO;

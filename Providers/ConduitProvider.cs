@@ -1,10 +1,7 @@
 ﻿using DisCatSharp.ApplicationCommands;
 using DisCatSharp.Entities;
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace DisCatSharp.Support.Providers

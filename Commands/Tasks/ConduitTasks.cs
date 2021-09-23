@@ -1,15 +1,10 @@
 ﻿using DisCatSharp.ApplicationCommands;
-using DisCatSharp.ApplicationCommands.Attributes;
 using DisCatSharp.Entities;
 using DisCatSharp.Enums;
-using DisCatSharp.Interactivity;
 using DisCatSharp.Interactivity.Extensions;
+using DisCatSharp.Phabricator;
+using DisCatSharp.Phabricator.Applications.Maniphest;
 using DisCatSharp.Support.Providers;
-
-using Org.BouncyCastle.Crypto;
-
-using Stwalkerster.SharphConduit;
-using Stwalkerster.SharphConduit.Applications.Maniphest;
 
 using System;
 using System.Collections.Generic;
