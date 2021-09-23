@@ -121,7 +121,7 @@ namespace DisCatSharp.Support.Commands.Tasks
         /// <param name="title">The title.</param>
         /// <param name="description">The description.</param>
         /// <returns>The url of the added task.</returns>
-        [ContextMenu(ApplicationCommandType.Message, "Create a task")]
+        [ContextMenu(ApplicationCommandType.Message, "Create a task", false)]
         public static async Task CreateTaskFromMessageAsync(ContextMenuContext ctx)
         {
             await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder() { IsEphemeral = false, Content = "Generating Task..." });
