@@ -48,7 +48,8 @@ namespace DisCatSharp.Support.Commands.Tasks
                 {
                     Title = $"{type} {title}",
                     Description = description,
-                    Priority = priority
+                    Priority = priority,
+                    EditPolicy = Bot.Config.ConduitConfig.Subscribers[0]
 
                 };
                 m.Edit(task);
@@ -181,7 +182,8 @@ namespace DisCatSharp.Support.Commands.Tasks
                 {
                     Title = $"{type} {title}",
                     Description = ctx.TargetMessage.Content + $"\n\nTicket source: {ctx.TargetMessage.JumpLink.AbsoluteUri}",
-                    Priority = priority
+                    Priority = priority,
+                    EditPolicy = Bot.Config.ConduitConfig.Subscribers[0]
 
                 };
                 m.Edit(task);
