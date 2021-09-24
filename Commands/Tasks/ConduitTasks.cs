@@ -1,4 +1,5 @@
 ﻿using DisCatSharp.ApplicationCommands;
+using DisCatSharp.ApplicationCommands.Attributes;
 using DisCatSharp.Entities;
 using DisCatSharp.Enums;
 using DisCatSharp.Interactivity.Extensions;
@@ -16,7 +17,7 @@ namespace DisCatSharp.Support.Commands.Tasks
     /// <summary>
     /// The conduit tasks.
     /// </summary>
-    [SlashCommandGroup("tasks", "Tasks management for bugs.aitsys.dev", false)]
+    //[SlashCommandGroup("tasks", "Tasks management for bugs.aitsys.dev", false)]
     public class ConduitTasks : ApplicationCommandsModule
     {
         /// <summary>
@@ -73,8 +74,8 @@ namespace DisCatSharp.Support.Commands.Tasks
         /// <param name="task_id">The task_id.</param>
         /// <returns>A Task.</returns>
         [SlashCommand("close", "Closes a task")]
-        public static async Task CloseTaskAsync(InteractionContext ctx,
-            [Option("task_id", "The task id")] string task_id)
+        public static async Task CloseTaskAsync(InteractionContext ctx, 
+            [Autocomplete(typeof(ConduitTaskProvider)), Option("task_id", "The task", true)] string task_id)
         {
             await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder() { IsEphemeral = false, Content = "Deleting Task..." });
             try

@@ -237,7 +237,7 @@ namespace DisCatSharp.Support
             DiscordClient.GuildUpdated += Client_GuildUpdated;
             DiscordClient.GuildDeleted += Client_GuildDeleted;
             */
-            DiscordClient.MessageCreated += async (sender, args) => await Task.FromResult(MessageEvents.Client_MessageCreated(sender, args));/*
+            DiscordClient.MessageCreated += async (sender, args) => await Task.Run(async () => await MessageEvents.Client_MessageCreated(sender, args));/*
             DiscordClient.MessageReactionAdded += Client_MessageReactionAdded;
 
             DiscordClient.GuildMemberAdded += Client_GuildMemberAdded;
