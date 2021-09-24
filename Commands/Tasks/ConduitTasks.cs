@@ -17,7 +17,7 @@ namespace DisCatSharp.Support.Commands.Tasks
     /// <summary>
     /// The conduit tasks.
     /// </summary>
-    //[SlashCommandGroup("tasks", "Tasks management for bugs.aitsys.dev", false)]
+    [SlashCommandGroup("tasks", "Tasks management for bugs.aitsys.dev", false)]
     public class ConduitTasks : ApplicationCommandsModule
     {
         /// <summary>

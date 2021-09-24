@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Linq;
+using Microsoft.Extensions.Logging;
 
 namespace DisCatSharp.Support.Providers
 {
@@ -119,6 +120,7 @@ namespace DisCatSharp.Support.Providers
             {
                 return null;
             }
+            Bot.DiscordClient.Logger.LogInformation("Calling " + context.Options.First().Name);
 
             Maniphest m = new(Bot.ConduitClient);
             List<ApplicationEditorSearchConstraint> search = new();
