@@ -24,19 +24,22 @@ namespace DisCatSharp.Support.Events.Discord
         /// <param name="e">The event args.</param>
         public static async Task Client_MessageCreated(DiscordClient sender, MessageCreateEventArgs e)
         {
-            if(true)//e.Guild.Id == Bot.Config.DiscordConfig.ApplicationCommandConfig.Dcs.GuildId)
+            await Task.Run(async() =>
             {
-                Regex reg = new(@"(?:https:\/\/bugs.aitsys.dev\/T(\d{1,4)|(?:T)(\d{1,4}))");
-                Match match = reg.Match(e.Message.Content);
-                if(match.Success)
+                if (true)//e.Guild.Id == Bot.Config.DiscordConfig.ApplicationCommandConfig.Dcs.GuildId)
                 {
-                    await SearchAndSendTaskAsync(match, e.Message, e.Channel);
+                    Regex reg = new(@"(?:https:\/\/bugs.aitsys.dev\/T(\d{1,4)|(?:T)(\d{1,4}))");
+                    Match match = reg.Match(e.Message.Content);
+                    if (match.Success)
+                    {
+                        await SearchAndSendTaskAsync(match, e.Message, e.Channel);
+                    }
+                    else
+                    {
+                        await Task.FromResult(true);
+                    }
                 }
-                else
-                {
-                    await Task.FromResult(true);
-                }
-            }
+            });
         }
 
         /// <summary>
