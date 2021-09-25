@@ -5,11 +5,13 @@ using DisCatSharp.Enums;
 using DisCatSharp.Interactivity.Extensions;
 using DisCatSharp.Phabricator;
 using DisCatSharp.Phabricator.Applications.Maniphest;
+using DisCatSharp.Support.Entities.Phabricator;
 using DisCatSharp.Support.Providers;
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace DisCatSharp.Support.Commands.Tasks
@@ -52,7 +54,13 @@ namespace DisCatSharp.Support.Commands.Tasks
                 task.SetProjects(Bot.Config.ConduitConfig.Projects);
                 task.SetSubscribers(Bot.Config.ConduitConfig.Subscribers);
                 m.Edit(task);
-                await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"Task created: https://bugs.aitsys.dev/T{task.Identifier}"));
+                List<ApplicationEditorSearchConstraint> search = new();
+                List<int> ids = new();
+                ids.Add(task.Identifier);
+                search.Add(new("ids", ids));
+                var stask = m.Search(null, search).First();
+                PhabManiphestTask etask = new(stask, null, null);
+                await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"Task created: https://bugs.aitsys.dev/T{task.Identifier}").AddEmbed(etask.GetEmbed()));
             }
             catch (Exception ex)
             {
@@ -186,7 +194,13 @@ namespace DisCatSharp.Support.Commands.Tasks
                 task.SetProjects(Bot.Config.ConduitConfig.Projects);
                 task.SetSubscribers(Bot.Config.ConduitConfig.Subscribers);
                 m.Edit(task);
-                await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"Task created: https://bugs.aitsys.dev/T{task.Identifier}"));
+                List<ApplicationEditorSearchConstraint> search = new();
+                List<int> ids = new();
+                ids.Add(task.Identifier);
+                search.Add(new("ids", ids));
+                var stask = m.Search(null, search).First();
+                PhabManiphestTask etask = new(stask, null, null);
+                await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"Task created: https://bugs.aitsys.dev/T{task.Identifier}").AddEmbed(etask.GetEmbed()));
             }
             catch (Exception ex)
             {

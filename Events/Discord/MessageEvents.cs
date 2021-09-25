@@ -4,6 +4,8 @@ using DisCatSharp.Phabricator;
 using DisCatSharp.Phabricator.Applications.Maniphest;
 using DisCatSharp.Support.Entities.Phabricator;
 
+using Newtonsoft.Json;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -58,7 +60,35 @@ namespace DisCatSharp.Support.Events.Discord
                 ids.Add(Convert.ToInt32(match.Groups[2].Value));
                 search.Add(new("ids", ids));
                 var task = m.Search(null, search).First();
-                PhabManiphestTask embed = new(task);
+                UserSearch user = null;
+                Extended extuser = null;
+                if (!string.IsNullOrEmpty(task.Owner))
+                {
+                    var searchUser = new Dictionary<string, dynamic>();
+                    string[] phids = { task.Owner };
+                    searchUser.Add("phids", phids);
+                    var constraints = new Dictionary<string, dynamic>
+                {
+                    { "constraints", searchUser }
+                };
+                    var tdata = Bot.ConduitClient.CallMethod("user.search", constraints);
+                    var data = JsonConvert.SerializeObject(tdata);
+
+                    user = JsonConvert.DeserializeObject<UserSearch>(data);
+                    var username = new List<string>
+                {
+                    user.Result.Data[0].Fields.Username
+                };
+
+                    var extconstraints = new Dictionary<string, dynamic>
+                {
+                    { "usernames", username }
+                };
+                    var tdata2 = Bot.ConduitClient.CallMethod("user.query", extconstraints);
+                    var data2 = JsonConvert.SerializeObject(tdata2);
+                    extuser = JsonConvert.DeserializeObject<Extended>(data2);
+                }
+                PhabManiphestTask embed = new(task, user, extuser);
                 DiscordMessageBuilder builder = new();
                 builder.AddEmbed(embed.GetEmbed());
                 return await message.RespondAsync(builder);

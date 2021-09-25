@@ -132,7 +132,8 @@ namespace DisCatSharp.Support.Providers
                 return null;
             }
 
-            var filtered_tasks = tasks.Where(t => t.Title.Contains(context.FocusedOption.Value as string));
+            string tsearch = context.FocusedOption.Value as string;
+            var filtered_tasks = tasks.Where(t => t.Title.ToLower().Contains(tsearch.ToLower()));
 
             if (!filtered_tasks.Any())
             {
