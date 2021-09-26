@@ -1,19 +1,15 @@
 ﻿using DisCatSharp.ApplicationCommands;
 using DisCatSharp.ApplicationCommands.Attributes;
 using DisCatSharp.Entities;
-using DisCatSharp.Enums;
-using DisCatSharp.Interactivity.Extensions;
-using DisCatSharp.Support.Providers;
 using DisCatSharp.Helpers;
-
-using Newtonsoft.Json;
+using DisCatSharp.Support.Providers;
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Net;
 using System.IO;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace DisCatSharp.Support.Commands
 {
@@ -105,6 +101,13 @@ namespace DisCatSharp.Support.Commands
 
             var target_guild = await ctx.Client.GetGuildAsync(Convert.ToUInt64(guild_id));
             var source_channels = await ChannelHelper.GetOrderedChannelAsync(ctx.Guild);
+            var source_roles = ctx.Guild.Roles.Values;
+            var source_everyone = ctx.Guild.EveryoneRole;
+
+            foreach(DiscordRole role in source_roles.Where(r => r.IsManaged == false).OrderBy(r => r.Position))
+            {
+                await target_guild.CreateRoleAsync(role.Name, role.Permissions, role.Color, role.IsHoisted, role.IsMentionable, "Restore");
+            }
 
             try
             {
@@ -121,12 +124,13 @@ namespace DisCatSharp.Support.Commands
                         {
                             if(ov.Type == OverwriteType.Member)
                             {
-                                var tmem = await ov.GetMemberAsync();
+                                /*var tmem = await ov.GetMemberAsync();
                                 ovr.Add(new DiscordOverwriteBuilder(tmem).Allow(ov.Allowed));
-                                ovr.Add(new DiscordOverwriteBuilder(tmem).Deny(ov.Denied));
+                                ovr.Add(new DiscordOverwriteBuilder(tmem).Deny(ov.Denied));*/
                             } else
                             {
-                                var trole = await ov.GetRoleAsync();
+                                var srole = await ov.GetRoleAsync();
+                                var trole = target_guild.Roles.Values.Where(r => r.Name == srole.Name).First();
                                 ovr.Add(new DiscordOverwriteBuilder(trole).Allow(ov.Allowed));
                                 ovr.Add(new DiscordOverwriteBuilder(trole).Deny(ov.Denied));
                             }
@@ -141,13 +145,14 @@ namespace DisCatSharp.Support.Commands
                         {
                             if (ov.Type == OverwriteType.Member)
                             {
-                                var tmem = await ov.GetMemberAsync();
+                                /*var tmem = await ov.GetMemberAsync();
                                 ovr.Add(new DiscordOverwriteBuilder(tmem).Allow(ov.Allowed));
-                                ovr.Add(new DiscordOverwriteBuilder(tmem).Deny(ov.Denied));
+                                ovr.Add(new DiscordOverwriteBuilder(tmem).Deny(ov.Denied));*/
                             }
                             else
                             {
-                                var trole = await ov.GetRoleAsync();
+                                var srole = await ov.GetRoleAsync();
+                                var trole = target_guild.Roles.Values.Where(r => r.Name == srole.Name).First();
                                 ovr.Add(new DiscordOverwriteBuilder(trole).Allow(ov.Allowed));
                                 ovr.Add(new DiscordOverwriteBuilder(trole).Deny(ov.Denied));
                             }
