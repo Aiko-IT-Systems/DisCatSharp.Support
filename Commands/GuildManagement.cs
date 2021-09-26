@@ -109,6 +109,8 @@ namespace DisCatSharp.Support.Commands
                 await target_guild.CreateRoleAsync(role.Name, role.Permissions, role.Color, role.IsHoisted, role.IsMentionable, "Restore");
             }
 
+            await target_guild.EveryoneRole.ModifyAsync(permissions: source_everyone.Permissions, reason: "Restore");
+
             try
             {
                 #region Restore target
