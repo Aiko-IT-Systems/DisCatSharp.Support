@@ -87,28 +87,25 @@ namespace DisCatSharp.Support.Commands
                     }
                 }
 
-                foreach (DiscordGuildEmoji emoji in target_guild.Emojis.Values.Where(r => r.IsManaged == false))
+                foreach (DiscordEmoji emoji in target_guild.Emojis.Values.Where(r => r.IsManaged == false))
                 {
-                    await emoji.DeleteAsync("Clean up");
+                    var gemoji = await target_guild.GetEmojiAsync(emoji.Id);
+                    await gemoji.DeleteAsync("Clean up");
                 }
 
-                foreach (DiscordSticker sticker in target_guild.Stickers.Values)
-                {
-                    await sticker.DeleteAsync("Clean up");
-                }
                 #endregion
                 await ctx.FollowUpAsync(new DiscordFollowupMessageBuilder().WithContent("Target voided"));
             }
             catch (Exception ex)
             {
-                await ctx.FollowUpAsync(new DiscordFollowupMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
+                await ctx.Channel.SendMessageAsync(new DiscordEmbedBuilder()
                 {
                     Title = "Error",
                     Description = $"Exception: {ex.Message}\n" +
                     $"```\n" +
                     $"{ex.StackTrace}\n" +
                     $"```"
-                }));
+                }.Build());
             }
         }
 
@@ -158,7 +155,7 @@ namespace DisCatSharp.Support.Commands
                             else
                             {
                                 var srole = await ov.GetRoleAsync();
-                                if (!srole.IsManaged)
+                                if (!srole.IsManaged || srole.Name == "@everyone")
                                 {
                                     var trole = target_guild.Roles.Values.Where(r => r.Name == srole.Name).First();
                                     ovr.Add(new DiscordOverwriteBuilder(trole).Allow(ov.Allowed));
@@ -184,7 +181,7 @@ namespace DisCatSharp.Support.Commands
                             else
                             {
                                 var srole = await ov.GetRoleAsync();
-                                if (!srole.IsManaged)
+                                if (!srole.IsManaged ||srole.Name == "@everyone")
                                 {
                                     var trole = target_guild.Roles.Values.Where(r => r.Name == srole.Name).First();
                                     ovr.Add(new DiscordOverwriteBuilder(trole).Allow(ov.Allowed));
@@ -205,7 +202,6 @@ namespace DisCatSharp.Support.Commands
                     }
                 }
 
-                var new_channels = await target_guild.GetChannelsAsync();
 
                 WebClient wc = new();
                 
@@ -214,9 +210,12 @@ namespace DisCatSharp.Support.Commands
                 var t_public_old = target_guild.PublicUpdatesChannel;
                 await t_public_old.ModifyAsync(c => c.Name = "old-updates");
 
+                target_guild = await ctx.Client.GetGuildAsync(target_guild.Id);
+                var new_channels = await target_guild.GetChannelsAsync();
+
                 await target_guild.ModifyAsync(g => 
                 {
-                    g.Name = ctx.Guild.Name;
+                    g.Name = ctx.Guild.Name + " Copy";
                     g.Description = ctx.Guild.Description;
                     g.AuditLogReason = "Restore";
                     g.RulesChannel = new_channels.Where(x => x.Name == ctx.Guild.RulesChannel.Name).First();
@@ -226,9 +225,9 @@ namespace DisCatSharp.Support.Commands
                     g.SystemChannel = new_channels.Where(x => x.Name == ctx.Guild.SystemChannel.Name).First();
                     g.SystemChannelFlags = ctx.Guild.SystemChannelFlags;
                     g.DefaultMessageNotifications = ctx.Guild.DefaultMessageNotifications;
-                    g.PreferredLocale = ctx.Guild.PreferredLocale;
+                    //g.PreferredLocale = ctx.Guild.PreferredLocale;
                 });
-
+                target_guild = await ctx.Client.GetGuildAsync(target_guild.Id);
                 await target_guild.ModifyWidgetSettingsAsync(ctx.Guild.WidgetEnabled, ctx.Guild.WidgetChannel ?? null, "Restore");
                 
                 wc.DownloadFile(new Uri(ctx.Guild.IconUrl), ctx.Guild.IconHash + (ctx.Guild.PremiumTier != PremiumTier.None && target_guild.PremiumTier != PremiumTier.None ? ".gif" : ".png"));
@@ -284,7 +283,6 @@ namespace DisCatSharp.Support.Commands
                     File.Delete(ctx.Guild.DiscoverySplashHash + ".png");
                 }
 
-                
                 await t_public_old.DeleteAsync("Cleanup");
                 await t_rules_old.DeleteAsync("Cleanup");
                 
@@ -338,6 +336,7 @@ namespace DisCatSharp.Support.Commands
                     // Ignore
                 }
                 */
+                target_guild = await ctx.Client.GetGuildAsync(target_guild.Id);
 
                 var welcome_screen = ctx.Guild.HasWelcomeScreen ? await ctx.Guild.GetWelcomeScreenAsync() : null;
                 var membership_gate = ctx.Guild.HasMemberVerificationGate ? await ctx.Guild.GetMembershipScreeningFormAsync() : null;
@@ -351,7 +350,8 @@ namespace DisCatSharp.Support.Commands
                         List<DiscordGuildWelcomeScreenChannel> wscs = new();
                         foreach(var wsc in welcome_screen.WelcomeChannels)
                         {
-                            wscs.Add(new DiscordGuildWelcomeScreenChannel(new_channels.Where(c => c.Name == ctx.Guild.GetChannel(wsc.ChannelId).Name).First().Id, wsc.Description, DiscordEmoji.FromUnicode(Bot.DiscordClient, wsc.EmojiName)));
+                            var schannel = ctx.Guild.GetChannel(wsc.ChannelId);
+                            wscs.Add(new DiscordGuildWelcomeScreenChannel(new_channels.Where(c => c.Name == schannel.Name).First().Id, wsc.Description, DiscordEmoji.FromUnicode(Bot.DiscordClient, wsc.EmojiName)));
                         }
                         g.WelcomeChannels = Optional.FromValue(wscs.AsEnumerable());
                     });
@@ -389,18 +389,18 @@ namespace DisCatSharp.Support.Commands
                 
 
                 #endregion
-                await ctx.FollowUpAsync(new DiscordFollowupMessageBuilder().WithContent($"Target restored\n\nTemplate: https://discord.new/{template.Code}"));
+                await ctx.Channel.SendMessageAsync($"Target restored\n\nTemplate: https://discord.new/{template.Code}");
             }
             catch (Exception ex)
             {
-                await ctx.FollowUpAsync(new DiscordFollowupMessageBuilder().AddEmbed(new DiscordEmbedBuilder()
+                await ctx.Channel.SendMessageAsync(new DiscordEmbedBuilder()
                 {
                     Title = "Error",
                     Description = $"Exception: {ex.Message}\n" +
                     $"```\n" +
                     $"{ex.StackTrace}\n" +
                     $"```"
-                }));
+                }.Build());
             }
         }
 
