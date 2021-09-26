@@ -60,9 +60,9 @@ namespace DisCatSharp.Support.Commands
                 var cur = await target_guild.GetMemberAsync(ctx.Client.CurrentUser.Id);
                 foreach (DiscordRole role in target_guild.Roles.Values.Where(r => r.IsManaged == false))
                 {
-                    if (cur.Roles.Contains(role))
+                    if (role.Id == 891695908058697729 || role.Id == 891721135132135445 || role.Name == "@everyone")
                     {
-                        // Nothing
+                        await Task.Delay(100);
                     } else
                     {
                         await role.DeleteAsync("Clean up");
@@ -167,10 +167,10 @@ namespace DisCatSharp.Support.Commands
                         }
                         var rchan = channel.Type switch
                         {
-                            ChannelType.Voice => await target_guild.CreateVoiceChannelAsync(channel.Name, channel.Parent ?? null, channel.Bitrate ?? null, channel.UserLimit ?? null, ovr.AsEnumerable(), channel.QualityMode ?? null, "Restore"),
-                            ChannelType.Stage => await target_guild.CreateStageChannelAsync(channel.Name, ovr.AsEnumerable(), reason: "Restore"),
-                            ChannelType.News => await target_guild.CreateChannelAsync(channel.Name, channel.Type, channel.Parent ?? null, channel.Topic, null, null, ovr.AsEnumerable(), channel.IsNSFW, channel.PerUserRateLimit ?? null, null, "Restore"),
-                            ChannelType.Text => await target_guild.CreateChannelAsync(channel.Name, channel.Type, channel.Parent ?? null, channel.Topic, null, null, ovr.AsEnumerable(), channel.IsNSFW, channel.PerUserRateLimit ?? null, null, "Restore"),
+                            ChannelType.Voice => await target_guild.CreateVoiceChannelAsync(channel.Name, channel.Parent == null ? null : target_guild.Channels.Values.Where(c => c.Name == channel.Parent.Name).First(), channel.Bitrate ?? null, channel.UserLimit ?? null, ovr.AsEnumerable(), channel.QualityMode ?? null, "Restore"),
+                            ChannelType.Stage => await target_guild.CreateChannelAsync(channel.Name, ChannelType.Stage, channel.Parent == null ? null : target_guild.Channels.Values.Where(c => c.Name == channel.Parent.Name).First(), null, null, null, ovr.AsEnumerable(), null, null, null, "Restore"),
+                            ChannelType.News => await target_guild.CreateChannelAsync(channel.Name, channel.Type, channel.Parent == null ? null : target_guild.Channels.Values.Where(c => c.Name == channel.Parent.Name).First(), channel.Topic, null, null, ovr.AsEnumerable(), channel.IsNSFW, channel.PerUserRateLimit ?? null, null, "Restore"),
+                            ChannelType.Text => await target_guild.CreateChannelAsync(channel.Name, channel.Type, channel.Parent == null ? null : target_guild.Channels.Values.Where(c => c.Name == channel.Parent.Name).First(), channel.Topic, null, null, ovr.AsEnumerable(), channel.IsNSFW, channel.PerUserRateLimit ?? null, null, "Restore"),
                             _=> null
                         };
                         rchan = null;
