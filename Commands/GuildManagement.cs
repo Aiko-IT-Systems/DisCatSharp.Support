@@ -57,10 +57,16 @@ namespace DisCatSharp.Support.Commands
                 });
 
                 await target_guild.DeleteAllChannelsAsync();
-
+                var cur = await target_guild.GetMemberAsync(ctx.Client.CurrentUser.Id);
                 foreach (DiscordRole role in target_guild.Roles.Values.Where(r => r.IsManaged == false))
                 {
-                    await role.DeleteAsync("Clean up");
+                    if (cur.Roles.Contains(role))
+                    {
+                        // Nothing
+                    } else
+                    {
+                        await role.DeleteAsync("Clean up");
+                    }
                 }
 
                 foreach (DiscordGuildEmoji emoji in target_guild.Emojis.Values.Where(r => r.IsManaged == false))
@@ -162,11 +168,12 @@ namespace DisCatSharp.Support.Commands
                         var rchan = channel.Type switch
                         {
                             ChannelType.Voice => await target_guild.CreateVoiceChannelAsync(channel.Name, channel.Parent ?? null, channel.Bitrate ?? null, channel.UserLimit ?? null, ovr.AsEnumerable(), channel.QualityMode ?? null, "Restore"),
-                            ChannelType.Stage => await target_guild.CreateChannelAsync(channel.Name, ChannelType.Stage, channel.Parent ?? null, overwrites: ovr.AsEnumerable(), reason: "Restore"),
+                            ChannelType.Stage => await target_guild.CreateStageChannelAsync(channel.Name, ovr.AsEnumerable(), reason: "Restore"),
                             ChannelType.News => await target_guild.CreateChannelAsync(channel.Name, channel.Type, channel.Parent ?? null, channel.Topic, null, null, ovr.AsEnumerable(), channel.IsNSFW, channel.PerUserRateLimit ?? null, null, "Restore"),
                             ChannelType.Text => await target_guild.CreateChannelAsync(channel.Name, channel.Type, channel.Parent ?? null, channel.Topic, null, null, ovr.AsEnumerable(), channel.IsNSFW, channel.PerUserRateLimit ?? null, null, "Restore"),
                             _=> null
                         };
+                        rchan = null;
 
                     }
                 }
