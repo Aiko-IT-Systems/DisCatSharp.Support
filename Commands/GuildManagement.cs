@@ -30,7 +30,6 @@ namespace DisCatSharp.Support.Commands
             await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("Guild void starting.."));
 
             var target_guild = await ctx.Client.GetGuildAsync(Convert.ToUInt64(guild_id));
-            //var source_channels = await ChannelHelper.GetOrderedChannelAsync(ctx.Guild);
 
             try
             {
@@ -104,17 +103,17 @@ namespace DisCatSharp.Support.Commands
             var source_roles = ctx.Guild.Roles.Values;
             var source_everyone = ctx.Guild.EveryoneRole;
 
-            foreach(DiscordRole role in source_roles.Where(r => r.IsManaged == false).OrderByDescending(r => r.Position))
-            {
-                await target_guild.CreateRoleAsync(role.Name, role.Permissions, role.Color, role.IsHoisted, role.IsMentionable, "Restore");
-            }
-
-            await target_guild.EveryoneRole.ModifyAsync(permissions: source_everyone.Permissions, reason: "Restore");
-
             try
             {
                 #region Restore target
                 // Restore target
+
+                foreach (DiscordRole role in source_roles.Where(r => r.IsManaged == false).OrderByDescending(r => r.Position))
+                {
+                    await target_guild.CreateRoleAsync(role.Name, role.Permissions, role.Color, role.IsHoisted, role.IsMentionable, "Restore");
+                }
+
+                await target_guild.EveryoneRole.ModifyAsync(permissions: source_everyone.Permissions, reason: "Restore");
 
                 foreach (var category in source_channels)
                 {
