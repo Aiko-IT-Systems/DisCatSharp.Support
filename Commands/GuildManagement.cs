@@ -20,6 +20,20 @@ namespace DisCatSharp.Support.Commands
     internal class GuildManagement : ApplicationCommandsModule
     {
         /// <summary>
+        /// Copies a guild.
+        /// </summary>
+        /// <param name="ctx">The ctx.</param>
+        /// <param name="guild_id">The target guild_id.</param>
+        [SlashCommand("void_copy_guild", "Voides a target guild and copies the source guild then.")]
+        public static async Task VoidAndCopyGuildAsync(InteractionContext ctx, [Autocomplete(typeof(GuildProvider)), Option("guild_id", "Target guild id", true)] string guild_id)
+        {
+            await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("Guild void & restore starting.."));
+            await VoidGuildAsync(ctx, guild_id);
+            await CopyGuildAsync(ctx, guild_id);
+            await ctx.FollowUpAsync(new DiscordFollowupMessageBuilder().WithContent("Finished."));
+        }
+
+        /// <summary>
         /// Voids the guild.
         /// </summary>
         /// <param name="ctx">The ctx.</param>
@@ -36,6 +50,9 @@ namespace DisCatSharp.Support.Commands
             {
                 #region Void target
                 // Void target
+                var tmpl = await target_guild.GetTemplatesAsync();
+                if (tmpl != null && tmpl.Count != 0)
+                    await target_guild.DeleteTemplateAsync(tmpl[0].Code);
 
                 await target_guild.ModifyAsync(g =>
                 {
@@ -43,9 +60,6 @@ namespace DisCatSharp.Support.Commands
                     g.Icon = null;
                     g.Description = null;
                     g.AuditLogReason = "Clean up";
-                    //g.RulesChannel = null;
-                    //g.PublicUpdatesChannel = null;
-                    //g.AfkChannel = null;
                     if (target_guild.PremiumTier == PremiumTier.Tier_1 || target_guild.PremiumTier == PremiumTier.Tier_2 || target_guild.PremiumTier == PremiumTier.Tier_3)
                     {
                         g.Splash = null;
@@ -139,7 +153,9 @@ namespace DisCatSharp.Support.Commands
                                 /*var tmem = await ov.GetMemberAsync();
                                 ovr.Add(new DiscordOverwriteBuilder(tmem).Allow(ov.Allowed));
                                 ovr.Add(new DiscordOverwriteBuilder(tmem).Deny(ov.Denied));*/
-                            } else
+                                // Ignore
+                            }
+                            else
                             {
                                 var srole = await ov.GetRoleAsync();
                                 if (!srole.IsManaged)
@@ -163,6 +179,7 @@ namespace DisCatSharp.Support.Commands
                                 /*var tmem = await ov.GetMemberAsync();
                                 ovr.Add(new DiscordOverwriteBuilder(tmem).Allow(ov.Allowed));
                                 ovr.Add(new DiscordOverwriteBuilder(tmem).Deny(ov.Denied));*/
+                                // Ignore
                             }
                             else
                             {
@@ -211,7 +228,8 @@ namespace DisCatSharp.Support.Commands
                     g.DefaultMessageNotifications = ctx.Guild.DefaultMessageNotifications;
                 });
 
-
+                await target_guild.ModifyWidgetSettingsAsync(ctx.Guild.WidgetEnabled, ctx.Guild.WidgetChannel ?? null, "Restore");
+                
                 wc.DownloadFile(new Uri(ctx.Guild.IconUrl), ctx.Guild.IconHash + (ctx.Guild.PremiumTier != PremiumTier.None && target_guild.PremiumTier != PremiumTier.None ? ".gif" : ".png"));
                 var fs = File.OpenRead(ctx.Guild.IconHash + (ctx.Guild.PremiumTier != PremiumTier.None && target_guild.PremiumTier != PremiumTier.None ? ".gif" : ".png"));
                 fs.Position = 0;
@@ -307,7 +325,7 @@ namespace DisCatSharp.Support.Commands
                     // Ignore
                 }
 
-                // Does not work with sticker smh
+                // TODO: Fix, does not work with sticker smh
                 /*
                 int si = 0;
                 foreach (DiscordSticker sticker in ctx.Guild.Stickers.Values)
@@ -357,8 +375,20 @@ namespace DisCatSharp.Support.Commands
                     });
                 }
 
+                var tmpl = await ctx.Guild.GetTemplatesAsync();
+                DiscordGuildTemplate template = null;
+                if(tmpl != null && tmpl.Count != 0)
+                {
+                    template = await target_guild.CreateTemplateAsync(tmpl[0].Name, tmpl[0].Description);
+                } 
+                else
+                {
+                    template = await target_guild.CreateTemplateAsync(ctx.Guild.Name, ctx.Guild.Description);
+                }
+                
+
                 #endregion
-                await ctx.FollowUpAsync(new DiscordFollowupMessageBuilder().WithContent("Target restored"));
+                await ctx.FollowUpAsync(new DiscordFollowupMessageBuilder().WithContent($"Target restored\n\nTemplate: https://discord.new/{template.Code}"));
             }
             catch (Exception ex)
             {
