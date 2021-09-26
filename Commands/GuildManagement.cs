@@ -93,7 +93,7 @@ namespace DisCatSharp.Support.Commands
         /// </summary>
         /// <param name="ctx">The ctx.</param>
         /// <param name="guild_id">The target guild_id.</param>
-        [SlashCommand("void_guild", "Copies a guild")]
+        [SlashCommand("copy_guild", "Copies a guild")]
         public static async Task CopyGuildAsync(InteractionContext ctx, [Autocomplete(typeof(GuildProvider)), Option("guild_id", "Target guild id", true)] string guild_id)
         {
             await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("Guild copy starting.."));
@@ -110,7 +110,8 @@ namespace DisCatSharp.Support.Commands
 
                 foreach (DiscordRole role in source_roles.Where(r => r.IsManaged == false).OrderByDescending(r => r.Position))
                 {
-                    await target_guild.CreateRoleAsync(role.Name, role.Permissions, role.Color, role.IsHoisted, role.IsMentionable, "Restore");
+                    if (role.Name != "@everyone")
+                        await target_guild.CreateRoleAsync(role.Name, role.Permissions, role.Color, role.IsHoisted, role.IsMentionable, "Restore");
                 }
 
                 await target_guild.EveryoneRole.ModifyAsync(permissions: source_everyone.Permissions, reason: "Restore");
@@ -160,10 +161,10 @@ namespace DisCatSharp.Support.Commands
                         }
                         var rchan = channel.Type switch
                         {
-                            ChannelType.Voice => await target_guild.CreateVoiceChannelAsync(channel.Name, channel.Parent, channel.Bitrate, channel.UserLimit, ovr.AsEnumerable(), channel.QualityMode, "Restore"),
-                            ChannelType.Stage => await target_guild.CreateChannelAsync(channel.Name, ChannelType.Stage, channel.Parent, overwrites: ovr.AsEnumerable(), reason: "Restore"),
-                            ChannelType.News => await target_guild.CreateChannelAsync(channel.Name, channel.Type, channel.Parent, channel.Topic, channel.Bitrate, channel.UserLimit, ovr.AsEnumerable(), channel.IsNSFW, channel.PerUserRateLimit, channel.QualityMode, "Restore"),
-                            ChannelType.Text => await target_guild.CreateChannelAsync(channel.Name, channel.Type, channel.Parent, channel.Topic, channel.Bitrate, channel.UserLimit, ovr.AsEnumerable(), channel.IsNSFW, channel.PerUserRateLimit, channel.QualityMode, "Restore"),
+                            ChannelType.Voice => await target_guild.CreateVoiceChannelAsync(channel.Name, channel.Parent ?? null, channel.Bitrate ?? null, channel.UserLimit ?? null, ovr.AsEnumerable(), channel.QualityMode ?? null, "Restore"),
+                            ChannelType.Stage => await target_guild.CreateChannelAsync(channel.Name, ChannelType.Stage, channel.Parent ?? null, overwrites: ovr.AsEnumerable(), reason: "Restore"),
+                            ChannelType.News => await target_guild.CreateChannelAsync(channel.Name, channel.Type, channel.Parent ?? null, channel.Topic, null, null, ovr.AsEnumerable(), channel.IsNSFW, channel.PerUserRateLimit ?? null, null, "Restore"),
+                            ChannelType.Text => await target_guild.CreateChannelAsync(channel.Name, channel.Type, channel.Parent ?? null, channel.Topic, null, null, ovr.AsEnumerable(), channel.IsNSFW, channel.PerUserRateLimit ?? null, null, "Restore"),
                             _=> null
                         };
 
@@ -173,6 +174,9 @@ namespace DisCatSharp.Support.Commands
                 var new_channels = await target_guild.GetChannelsAsync();
 
                 WebClient wc = new();
+
+                var t_rules_old = target_guild.RulesChannel;
+                var t_public_old = target_guild.PublicUpdatesChannel;
 
                 await target_guild.ModifyAsync(g =>
                 {
@@ -240,6 +244,9 @@ namespace DisCatSharp.Support.Commands
                     File.Delete(ctx.Guild.IconHash);
                     ms.Close();
                 });
+
+                await t_public_old.DeleteAsync("Cleanup");
+                await t_rules_old.DeleteAsync("Cleanup");
 
                 int max_emoji = target_guild.PremiumTier switch {
                     PremiumTier.None => 50,
