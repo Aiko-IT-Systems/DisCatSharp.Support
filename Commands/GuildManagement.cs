@@ -192,6 +192,9 @@ namespace DisCatSharp.Support.Commands
                     g.PublicUpdatesChannel = new_channels.Where(x => x.Name == ctx.Guild.PublicUpdatesChannel.Name).First();
                     g.AfkChannel = new_channels.Where(x => x.Name == ctx.Guild.AfkChannel.Name).First();
                     g.AfkTimeout = ctx.Guild.AfkTimeout;
+                    g.SystemChannel = new_channels.Where(x => x.Name == ctx.Guild.SystemChannel.Name).First();
+                    g.SystemChannelFlags = ctx.Guild.SystemChannelFlags;
+                    g.DefaultMessageNotifications = ctx.Guild.DefaultMessageNotifications;
                     if (target_guild.PremiumTier == PremiumTier.Tier_2)
                     {
                         wc.DownloadFile(new Uri(ctx.Guild.SplashUrl), ctx.Guild.SplashHash);
@@ -219,6 +222,22 @@ namespace DisCatSharp.Support.Commands
                         g.Banner = bms;
                         bms.Close();
                     }
+
+                    if (target_guild.Features.IsDiscoverable)
+                    {
+                        wc.DownloadFile(new Uri(ctx.Guild.DiscoverySplashUrl), ctx.Guild.DiscoverySplashHash);
+                        var dfs = File.OpenRead(ctx.Guild.DiscoverySplashHash);
+                        dfs.Position = 0;
+                        MemoryStream dms = new();
+                        dfs.CopyTo(dms);
+                        dfs.Close();
+                        File.Delete(ctx.Guild.DiscoverySplashHash);
+                        dms.Position = 0;
+                        g.DiscoverySplash = dms;
+                        dms.Close();
+                    }
+
+
                     File.Delete(ctx.Guild.IconHash);
                     ms.Close();
                 });
