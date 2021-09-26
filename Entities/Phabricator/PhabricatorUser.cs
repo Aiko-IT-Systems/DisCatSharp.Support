@@ -6,6 +6,9 @@ using System.Globalization;
 
 namespace DisCatSharp.Support.Entities.Phabricator
 {
+    /// <summary>
+    /// The policy.
+    /// </summary>
     public class Policy
     {
         [JsonProperty("view", NullValueHandling = NullValueHandling.Ignore)]
@@ -15,6 +18,9 @@ namespace DisCatSharp.Support.Entities.Phabricator
         public string Edit;
     }
 
+    /// <summary>
+    /// The fields.
+    /// </summary>
     public class Fields
     {
         [JsonProperty("username", NullValueHandling = NullValueHandling.Ignore)]
@@ -29,6 +35,9 @@ namespace DisCatSharp.Support.Entities.Phabricator
         [JsonProperty("dateCreated", NullValueHandling = NullValueHandling.Ignore)]
         internal int _dateCreated;
 
+        /// <summary>
+        /// Gets the date created.
+        /// </summary>
         [JsonIgnore]
         public DateTimeOffset? DateCreated =>
             DateTimeOffset.TryParse(this._dateCreated.ToString(), CultureInfo.InvariantCulture, DateTimeStyles.None, out var dto) ? dto : null;
@@ -36,6 +45,9 @@ namespace DisCatSharp.Support.Entities.Phabricator
         [JsonProperty("dateModified", NullValueHandling = NullValueHandling.Ignore)]
         internal int _dateModified;
 
+        /// <summary>
+        /// Gets the date modified.
+        /// </summary>
         [JsonIgnore]
         public DateTimeOffset? DateModified =>
             DateTimeOffset.TryParse(this._dateModified.ToString(), CultureInfo.InvariantCulture, DateTimeStyles.None, out var dto) ? dto : null;
@@ -50,12 +62,18 @@ namespace DisCatSharp.Support.Entities.Phabricator
         public ulong? CustomDiscord;
     }
 
+    /// <summary>
+    /// The attachments.
+    /// </summary>
     public class Attachments
     {
         [JsonProperty("subscribers", NullValueHandling = NullValueHandling.Ignore)]
         public Subscribers Subscribers;
     }
 
+    /// <summary>
+    /// The subscribers.
+    /// </summary>
     public class Subscribers
     {
         [JsonProperty("subscriberPHIDs", NullValueHandling = NullValueHandling.Ignore)]
@@ -69,16 +87,25 @@ namespace DisCatSharp.Support.Entities.Phabricator
     }
 
 
+    /// <summary>
+    /// The maps.
+    /// </summary>
     public class Maps
     {
     }
 
+    /// <summary>
+    /// The query.
+    /// </summary>
     public class Query
     {
         [JsonProperty("queryKey", NullValueHandling = NullValueHandling.Ignore)]
         public object QueryKey;
     }
 
+    /// <summary>
+    /// The cursor.
+    /// </summary>
     public class Cursor
     {
         [JsonProperty("limit", NullValueHandling = NullValueHandling.Ignore)]
@@ -94,6 +121,9 @@ namespace DisCatSharp.Support.Entities.Phabricator
         public string Order;
     }
 
+    /// <summary>
+    /// The data.
+    /// </summary>
     public class Data
     {
         [JsonProperty("id", NullValueHandling = NullValueHandling.Ignore)]
@@ -111,6 +141,9 @@ namespace DisCatSharp.Support.Entities.Phabricator
         [JsonProperty("attachments", NullValueHandling = NullValueHandling.Ignore)]
         public Attachments Attachments;
     }
+    /// <summary>
+    /// The result.
+    /// </summary>
     public class Result
     {
         [JsonProperty("data", NullValueHandling = NullValueHandling.Ignore)]
@@ -126,6 +159,9 @@ namespace DisCatSharp.Support.Entities.Phabricator
         public Cursor Cursor;
     }
 
+    /// <summary>
+    /// The user search.
+    /// </summary>
     public class UserSearch
     {
         [JsonProperty("result", NullValueHandling = NullValueHandling.Ignore)]
@@ -138,6 +174,9 @@ namespace DisCatSharp.Support.Entities.Phabricator
         public string ErrorInfo;
     }
 
+    /// <summary>
+    /// The query result.
+    /// </summary>
     public class QResult
     {
         [JsonProperty("phid", NullValueHandling = NullValueHandling.Ignore)]
@@ -159,6 +198,9 @@ namespace DisCatSharp.Support.Entities.Phabricator
         public List<string> Roles;
     }
 
+    /// <summary>
+    /// The extended user search.
+    /// </summary>
     public class Extended
     {
         [JsonProperty("result", NullValueHandling = NullValueHandling.Ignore)]

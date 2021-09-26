@@ -25,7 +25,7 @@ namespace DisCatSharp.Support.Commands
         /// <param name="ic">The interaction context.</param>
         /// <param name="module">Target module.</param>
         [SlashCommand("add", "Add a new request", true)]
-        public async Task RequestFeatureAsync(InteractionContext ctx,
+        public static async Task RequestFeatureAsync(InteractionContext ctx,
             [Choice("DisCatSharp", "[Core]"),
             Choice("DisCatSharp.ApplicationCommands", "[ApplicationCommands]"),
             Choice("DisCatSharp.CommandsNext", "[CommandsNext]"),

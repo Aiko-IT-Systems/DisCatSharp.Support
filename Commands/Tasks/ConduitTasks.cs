@@ -9,13 +9,10 @@ using DisCatSharp.Support.Entities.Phabricator;
 using DisCatSharp.Support.Providers;
 
 using Newtonsoft.Json;
-using Renci.SshNet.Messages;
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace DisCatSharp.Support.Commands.Tasks

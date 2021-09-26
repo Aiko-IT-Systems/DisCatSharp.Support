@@ -1,15 +1,13 @@
 ﻿using DisCatSharp.ApplicationCommands;
 using DisCatSharp.ApplicationCommands.Attributes;
 using DisCatSharp.Entities;
-using DisCatSharp.Phabricator.Applications.Maniphest;
 using DisCatSharp.Phabricator;
+using DisCatSharp.Phabricator.Applications.Maniphest;
 
 using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Linq;
-using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 
 namespace DisCatSharp.Support.Providers
 {

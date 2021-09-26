@@ -1,9 +1,6 @@
 ﻿using DisCatSharp.Entities;
 using DisCatSharp.Phabricator.Applications.Maniphest;
 
-using System;
-using System.Linq;
-
 namespace DisCatSharp.Support.Entities.Phabricator
 {
     /// <summary>
