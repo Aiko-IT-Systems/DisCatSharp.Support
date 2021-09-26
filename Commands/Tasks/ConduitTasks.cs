@@ -8,8 +8,12 @@ using DisCatSharp.Phabricator.Applications.Maniphest;
 using DisCatSharp.Support.Entities.Phabricator;
 using DisCatSharp.Support.Providers;
 
+using Newtonsoft.Json;
+using Renci.SshNet.Messages;
+
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -74,6 +78,68 @@ namespace DisCatSharp.Support.Commands.Tasks
                 });
             }
         }
+        /// <summary>
+        /// Views a task.
+        /// </summary>
+        /// <param name="ctx">The interaction context.</param>
+        /// <param name="task_id">The task_id.</param>
+        /// <returns>A Task.</returns>
+        [SlashCommand("view", "Views a task")]
+        public static async Task ViewTaskAsync(InteractionContext ctx,
+            [Autocomplete(typeof(ConduitTaskProvider)), Option("task_id", "The task", true)] string task_id)
+        {
+            await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder() { IsEphemeral = false, Content = "Fetching Task..." });
+            try
+            {
+                Maniphest m = new(Bot.ConduitClient);
+                List<ApplicationEditorSearchConstraint> search = new();
+                List<int> ids = new();
+                ids.Add(Convert.ToInt32(task_id));
+                search.Add(new("ids", ids));
+                var task = m.Search(null, search).First();
+                UserSearch user = null;
+                Extended extuser = null;
+                if (!string.IsNullOrEmpty(task.Owner))
+                {
+                    var searchUser = new Dictionary<string, dynamic>();
+                    string[] phids = { task.Owner };
+                    searchUser.Add("phids", phids);
+                    var constraints = new Dictionary<string, dynamic>
+                {
+                    { "constraints", searchUser }
+                };
+                    var tdata = Bot.ConduitClient.CallMethod("user.search", constraints);
+                    var data = JsonConvert.SerializeObject(tdata);
+
+                    user = JsonConvert.DeserializeObject<UserSearch>(data);
+                    var username = new List<string>
+                {
+                    user.Result.Data[0].Fields.Username
+                };
+
+                    var extconstraints = new Dictionary<string, dynamic>
+                {
+                    { "usernames", username }
+                };
+                    var tdata2 = Bot.ConduitClient.CallMethod("user.query", extconstraints);
+                    var data2 = JsonConvert.SerializeObject(tdata2);
+                    extuser = JsonConvert.DeserializeObject<Extended>(data2);
+                }
+                PhabManiphestTask embed = new(task, user, extuser);
+                await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"Task informations for {Formatter.Bold(task.Title)}\nhttps://bugs.aitsys.dev/T{task.Identifier}").AddEmbed(embed.GetEmbed()));
+            }
+            catch (Exception ex)
+            {
+                await ctx.Channel.SendMessageAsync(new DiscordEmbedBuilder()
+                {
+                    Title = "Error",
+                    Description = $"Exception: {ex.Message}\n" +
+                    $"```\n" +
+                    $"{ex.StackTrace}\n" +
+                    $"```"
+                });
+            }
+        }
 
         /// <summary>
         /// Closes a task.
@@ -83,7 +149,7 @@ namespace DisCatSharp.Support.Commands.Tasks
         /// <returns>A Task.</returns>
         [SlashCommand("close", "Closes a task")]
         public static async Task CloseTaskAsync(InteractionContext ctx, 
-            [Autocomplete(typeof(ConduitTaskProvider)), Option("task_id", "The task", true)] string task_id)
+            [Autocomplete(typeof(ConduitOpenTaskProvider)), Option("task_id", "The task", true)] string task_id)
         {
             await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder() { IsEphemeral = false, Content = "Deleting Task..." });
             try

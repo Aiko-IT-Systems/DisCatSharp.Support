@@ -105,7 +105,7 @@ namespace DisCatSharp.Support.Providers
     /// <summary>
     /// The conduit task provider.
     /// </summary>
-    internal class ConduitTaskProvider : IAutocompleteProvider
+    internal class ConduitOpenTaskProvider : IAutocompleteProvider
     {
         /// <summary>
         /// Providers the.
@@ -132,8 +132,7 @@ namespace DisCatSharp.Support.Providers
                 return null;
             }
 
-            string tsearch = context.FocusedOption.Value as string;
-            var filtered_tasks = tasks.Where(t => t.Title.ToLower().Contains(tsearch.ToLower()));
+            var filtered_tasks = context.FocusedOption.Value == null ? tasks : tasks.Where(t => t.Title.ToLower().Contains(context.FocusedOption.Value.ToString().ToLower()));
 
             if (!filtered_tasks.Any())
             {
@@ -142,10 +141,63 @@ namespace DisCatSharp.Support.Providers
 
             List<DiscordApplicationCommandAutocompleteChoice> choices = new();
             int i = 0;
-            foreach(var task in filtered_tasks)
+            foreach (var task in filtered_tasks)
             {
-                if (i > 25)
+                if (i >= 24)
                     continue;
+
+                choices.Add(new DiscordApplicationCommandAutocompleteChoice(task.Title, task.Identifier.ToString()));
+                i++;
+            }
+            return choices;
+        }
+    }
+
+    /// <summary>
+    /// The conduit task provider.
+    /// </summary>
+    internal class ConduitTaskProvider : IAutocompleteProvider
+    {
+        /// <summary>
+        /// Providers the.
+        /// </summary>
+        /// <param name="context">The context.</param>
+        /// <returns>A Task.</returns>
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
+        public async Task<IEnumerable<DiscordApplicationCommandAutocompleteChoice>> Provider(AutocompleteContext context)
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
+        {
+            if (context.FocusedOption == null)
+            {
+                return null;
+            }
+
+            Maniphest m = new(Bot.ConduitClient);
+            List<ApplicationEditorSearchConstraint> search = new();
+            List<string> projects = new();
+            projects.Add("DisCatSharp");
+            search.Add(new("projects", projects));
+            var tasks = m.Search("all", search);
+            if (!tasks.Any())
+            {
+                Console.WriteLine("Nothing found A");
+                return null;
+            }
+
+            var filtered_tasks = context.FocusedOption.Value == null ? tasks : tasks.Where(t => t.Title.ToLower().Contains(context.FocusedOption.Value.ToString().ToLower()));
+
+            if (!filtered_tasks.Any())
+            {
+                Console.WriteLine("Nothing found B");
+                return null;
+            }
+
+            List<DiscordApplicationCommandAutocompleteChoice> choices = new();
+            int i = 0;
+            foreach (var task in filtered_tasks)
+            {
+                if (i >= 24)
+                    break;
 
                 choices.Add(new DiscordApplicationCommandAutocompleteChoice(task.Title, task.Identifier.ToString()));
                 i++;
