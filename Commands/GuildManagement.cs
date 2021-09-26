@@ -17,7 +17,7 @@ namespace DisCatSharp.Support.Commands
     /// The guild management.
     /// </summary>
     [SlashCommandGroup("guild_management", "Guild managemend module", false)]
-    internal class GuildManagement : ApplicationCommandsModule
+    internal class GuildManagement// : ApplicationCommandsModule
     {
         /// <summary>
         /// Copies a guild.
@@ -78,7 +78,7 @@ namespace DisCatSharp.Support.Commands
 
                 foreach (DiscordRole role in target_guild.Roles.Values.Where(r => r.IsManaged == false))
                 {
-                    if (role.Id == 891695908058697729 || role.Id == 891721135132135445 || role.Name == "@everyone")
+                    if (role.Name == "Server Booster" || role.Name == "@everyone")
                     {
                         await Task.Delay(100);
                     } else
@@ -226,6 +226,7 @@ namespace DisCatSharp.Support.Commands
                     g.SystemChannel = new_channels.Where(x => x.Name == ctx.Guild.SystemChannel.Name).First();
                     g.SystemChannelFlags = ctx.Guild.SystemChannelFlags;
                     g.DefaultMessageNotifications = ctx.Guild.DefaultMessageNotifications;
+                    g.PreferredLocale = ctx.Guild.PreferredLocale;
                 });
 
                 await target_guild.ModifyWidgetSettingsAsync(ctx.Guild.WidgetEnabled, ctx.Guild.WidgetChannel ?? null, "Restore");
@@ -411,8 +412,8 @@ namespace DisCatSharp.Support.Commands
         private static async Task CopyEmojiAsync(DiscordEmoji emoji, DiscordGuild target)
         {
             WebClient wc = new(); 
-            wc.DownloadFile(new Uri(emoji.Url), emoji.Id.ToString() + (emoji.IsAnimated ? "gif" : "png"));
-            var fs = File.OpenRead(emoji.Id.ToString() + (emoji.IsAnimated ? "gif" : "png"));
+            wc.DownloadFile(new Uri(emoji.Url), emoji.Id.ToString() + (emoji.IsAnimated ? ".gif" : ".png"));
+            var fs = File.OpenRead(emoji.Id.ToString() + (emoji.IsAnimated ? ".gif" : ".png"));
             fs.Position = 0;
             MemoryStream ms = new();
             fs.CopyTo(ms);
@@ -420,7 +421,7 @@ namespace DisCatSharp.Support.Commands
             await target.CreateEmojiAsync(emoji.Name, ms, reason: "Restore");
             fs.Close();
             await fs.DisposeAsync();
-            File.Delete(emoji.Id.ToString() + (emoji.IsAnimated ? "gif" : "png"));
+            File.Delete(emoji.Id.ToString() + (emoji.IsAnimated ? ".gif" : ".png"));
             ms.Close();
         }
 
@@ -432,8 +433,8 @@ namespace DisCatSharp.Support.Commands
         private static async Task CopyStickerAsync(DiscordSticker sticker, DiscordGuild target)
         {
             WebClient wc = new();
-            wc.DownloadFile(new Uri(sticker.Url), sticker.Asset + (sticker.FormatType == StickerFormat.LOTTIE ? "json" : "png"));
-            var fs = File.OpenRead(sticker.Asset + (sticker.FormatType == StickerFormat.LOTTIE ? "json" : "png"));
+            wc.DownloadFile(new Uri(sticker.Url), sticker.Asset + (sticker.FormatType == StickerFormat.LOTTIE ? ".json" : ".png"));
+            var fs = File.OpenRead(sticker.Asset + (sticker.FormatType == StickerFormat.LOTTIE ? ".json" : ".png"));
             fs.Position = 0;
             MemoryStream ms = new();
             fs.CopyTo(ms);
@@ -441,7 +442,7 @@ namespace DisCatSharp.Support.Commands
             await target.CreateStickerAsync(sticker.Name, sticker.Description, DiscordEmoji.FromName(Bot.DiscordClient, sticker.Tags.First()), ms, sticker.FormatType,"Restore");
             fs.Close();
             await fs.DisposeAsync();
-            File.Delete(sticker.Asset + (sticker.FormatType == StickerFormat.LOTTIE ? "json" : "png"));
+            File.Delete(sticker.Asset + (sticker.FormatType == StickerFormat.LOTTIE ? ".json" : ".png"));
             ms.Close();
         }
     }
