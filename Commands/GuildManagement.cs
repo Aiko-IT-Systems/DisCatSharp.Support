@@ -104,7 +104,7 @@ namespace DisCatSharp.Support.Commands
             var source_roles = ctx.Guild.Roles.Values;
             var source_everyone = ctx.Guild.EveryoneRole;
 
-            foreach(DiscordRole role in source_roles.Where(r => r.IsManaged == false).OrderBy(r => r.Position))
+            foreach(DiscordRole role in source_roles.Where(r => r.IsManaged == false).OrderByDescending(r => r.Position))
             {
                 await target_guild.CreateRoleAsync(role.Name, role.Permissions, role.Color, role.IsHoisted, role.IsMentionable, "Restore");
             }
@@ -169,49 +169,132 @@ namespace DisCatSharp.Support.Commands
                         };
 
                     }
+                }
 
-                    var channels = await target_guild.GetChannelsAsync();
+                var new_channels = await target_guild.GetChannelsAsync();
 
-                    await target_guild.ModifyAsync(g =>
+                WebClient wc = new();
+
+                await target_guild.ModifyAsync(g =>
+                {
+                    g.Name = ctx.Guild.Name;
+                    wc.DownloadFile(new Uri(ctx.Guild.IconUrl), ctx.Guild.IconHash);
+                    var fs = File.OpenRead(ctx.Guild.IconHash);
+                    fs.Position = 0;
+                    MemoryStream ms = new();
+                    fs.CopyTo(ms);
+                    fs.Close();
+                    ms.Position = 0;
+                    g.Icon = ms;
+                    g.Description = ctx.Guild.Description;
+                    g.AuditLogReason = "Restore";
+                    g.RulesChannel = new_channels.Where(x => x.Name == ctx.Guild.RulesChannel.Name).First();
+                    g.PublicUpdatesChannel = new_channels.Where(x => x.Name == ctx.Guild.PublicUpdatesChannel.Name).First();
+                    g.AfkChannel = new_channels.Where(x => x.Name == ctx.Guild.AfkChannel.Name).First();
+                    g.AfkTimeout = ctx.Guild.AfkTimeout;
+                    if (target_guild.PremiumTier == PremiumTier.Tier_2)
                     {
-                        g.Name = ctx.Guild.Name;
-                        WebClient wc = new();
-                        wc.DownloadFileAsync(new Uri(ctx.Guild.IconUrl), ctx.Guild.IconHash);
-                        var fs = File.OpenRead(ctx.Guild.IconHash);
-                        fs.Position = 0;
-                        MemoryStream ms = new();
-                        fs.CopyTo(ms);
-                        fs.Close();
-                        ms.Position = 0;
-                        g.Icon = ms;
-                        g.Description = ctx.Guild.Description;
-                        g.AuditLogReason = "Restore";
-                        g.RulesChannel = channels.Where(x => x.Name == ctx.Guild.RulesChannel.Name).First();
-                        g.PublicUpdatesChannel = channels.Where(x => x.Name == ctx.Guild.PublicUpdatesChannel.Name).First();
-                        g.AfkChannel = channels.Where(x => x.Name == ctx.Guild.AfkChannel.Name).First(); ;
-                        if (target_guild.PremiumTier == PremiumTier.Tier_2)
+                        wc.DownloadFile(new Uri(ctx.Guild.SplashUrl), ctx.Guild.SplashHash);
+                        var sfs = File.OpenRead(ctx.Guild.SplashHash);
+                        sfs.Position = 0;
+                        MemoryStream sms = new();
+                        sfs.CopyTo(sms);
+                        sfs.Close();
+                        File.Delete(ctx.Guild.SplashHash);
+                        sms.Position = 0;
+                        g.Splash = sms;
+                        sms.Close();
+                    }
+
+                    if (target_guild.PremiumTier == PremiumTier.Tier_2)
+                    {
+                        wc.DownloadFile(new Uri(ctx.Guild.BannerUrl), ctx.Guild.BannerHash);
+                        var bfs = File.OpenRead(ctx.Guild.BannerHash);
+                        bfs.Position = 0;
+                        MemoryStream bms = new();
+                        bfs.CopyTo(bms);
+                        bfs.Close();
+                        File.Delete(ctx.Guild.BannerHash);
+                        bms.Position = 0;
+                        g.Banner = bms;
+                        bms.Close();
+                    }
+                    File.Delete(ctx.Guild.IconHash);
+                    ms.Close();
+                });
+
+                int max_emoji = target_guild.PremiumTier switch {
+                    PremiumTier.None => 50,
+                    PremiumTier.Tier_1 => 100,
+                    PremiumTier.Tier_2 => 150,
+                    PremiumTier.Tier_3 => 250,
+                    _ =>  50
+                };
+
+                int max_sticker = target_guild.PremiumTier switch
+                {
+                    PremiumTier.None => 0,
+                    PremiumTier.Tier_1 => 15,
+                    PremiumTier.Tier_2 => 30,
+                    PremiumTier.Tier_3 => 60,
+                    _ => 0
+                };
+
+                int ei = 0;
+                foreach (DiscordGuildEmoji emoji in ctx.Guild.Emojis.Values)
+                {
+
+                    if (ei < max_emoji)
+                    {
+                        await CopyEmojiAsync(emoji, target_guild);
+                    }
+                    // Ignore
+                }
+
+                int si = 0;
+                foreach (DiscordSticker sticker in ctx.Guild.Stickers.Values)
+                {
+                    if (si < max_sticker)
+                    {
+                        await CopyStickerAsync(sticker, target_guild);
+                    }
+                    // Ignore
+                }
+
+                var welcome_screen = ctx.Guild.HasWelcomeScreen ? await ctx.Guild.GetWelcomeScreenAsync() : null;
+                var membership_gate = ctx.Guild.HasMemberVerificationGate ? await ctx.Guild.GetMembershipScreeningFormAsync() : null;
+
+                if (welcome_screen != null)
+                {
+                    var t_welcome_screen = await target_guild.ModifyWelcomeScreenAsync(g =>
+                    {
+                        g.Description = welcome_screen.Description;
+                        g.Enabled = ctx.Guild.HasWelcomeScreen;
+                        List<DiscordGuildWelcomeScreenChannel> wscs = new();
+                        foreach(var wsc in welcome_screen.WelcomeChannels)
                         {
-                            wc.DownloadFileAsync(new Uri(ctx.Guild.SplashUrl), ctx.Guild.SplashHash);
-                            var sfs = File.OpenRead(ctx.Guild.SplashHash);
-                            sfs.Position = 0;
-                            MemoryStream sms = new();
-                            sfs.CopyTo(sms);
-                            sfs.Close();
-                            sms.Position = 0;
-                            g.Splash = sms;
+                            wscs.Add(new DiscordGuildWelcomeScreenChannel(new_channels.Where(c => c.Name == ctx.Guild.GetChannel(wsc.ChannelId).Name).First().Id, wsc.Description, DiscordEmoji.FromUnicode(Bot.DiscordClient, wsc.EmojiName)));
+                        }
+                        g.WelcomeChannels = Optional.FromValue(wscs.AsEnumerable());
+                    });
+                }
+
+                if (membership_gate != null)
+                {
+                    var t_membership_gate = await target_guild.ModifyMembershipScreeningFormAsync(g =>
+                    {
+                        g.Description = membership_gate.Description;
+                        g.Enabled = ctx.Guild.HasMemberVerificationGate;
+                        g.AuditLogReason = "Restore";
+                        var fields = new DiscordGuildMembershipScreeningField[membership_gate.Fields.Count];
+                        int i = 1;
+                        foreach(var field in membership_gate.Fields)
+                        {
+                            fields[i] = new DiscordGuildMembershipScreeningField(field.Type, field.Label, field.Values.AsEnumerable(), field.IsRequired);
+                            i++;
                         }
 
-                        if (target_guild.PremiumTier == PremiumTier.Tier_2)
-                        {
-                            wc.DownloadFileAsync(new Uri(ctx.Guild.BannerUrl), ctx.Guild.BannerHash);
-                            var bfs = File.OpenRead(ctx.Guild.BannerHash);
-                            bfs.Position = 0;
-                            MemoryStream bms = new();
-                            bfs.CopyTo(bms);
-                            bfs.Close();
-                            bms.Position = 0;
-                            g.Banner = bms;
-                        }
+                        g.Fields = fields;
                     });
                 }
 
@@ -229,6 +312,46 @@ namespace DisCatSharp.Support.Commands
                     $"```"
                 }));
             }
+        }
+
+        /// <summary>
+        /// Copies the emoji.
+        /// </summary>
+        /// <param name="emoji">The source emoji.</param>
+        /// <param name="target">The target guild.</param>
+        private static async Task CopyEmojiAsync(DiscordGuildEmoji emoji, DiscordGuild target)
+        {
+            WebClient wc = new();
+            wc.DownloadFile(new Uri(emoji.Url), emoji.Id.ToString());
+            var fs = File.OpenRead(emoji.Id.ToString());
+            fs.Position = 0;
+            MemoryStream ms = new();
+            fs.CopyTo(ms);
+            fs.Close();
+            ms.Position = 0;
+            await target.CreateEmojiAsync(emoji.Name, ms, reason: "Restore");
+            File.Delete(emoji.Id.ToString());
+            ms.Close();
+        }
+
+        /// <summary>
+        /// Copies the sticker.
+        /// </summary>
+        /// <param name="sticker">The source sticker.</param>
+        /// <param name="target">The target guild.</param>
+        private static async Task CopyStickerAsync(DiscordSticker sticker, DiscordGuild target)
+        {
+            WebClient wc = new();
+            wc.DownloadFile(new Uri(sticker.Url), sticker.Asset);
+            var fs = File.OpenRead(sticker.Asset);
+            fs.Position = 0;
+            MemoryStream ms = new();
+            fs.CopyTo(ms);
+            fs.Close();
+            ms.Position = 0;
+            await target.CreateStickerAsync(sticker.Name, sticker.Description, DiscordEmoji.FromName(Bot.DiscordClient, sticker.Tags.First()), ms, sticker.FormatType,"Restore");
+            File.Delete(sticker.Asset);
+            ms.Close();
         }
     }
 }
