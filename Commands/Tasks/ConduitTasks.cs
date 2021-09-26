@@ -7,6 +7,7 @@ using DisCatSharp.Phabricator;
 using DisCatSharp.Phabricator.Applications.Maniphest;
 using DisCatSharp.Support.Entities.Phabricator;
 using DisCatSharp.Support.Providers;
+using DisCatSharp.Helpers;
 
 using Newtonsoft.Json;
 
@@ -75,6 +76,88 @@ namespace DisCatSharp.Support.Commands.Tasks
                 });
             }
         }
+
+        /// <summary>
+        /// Clusters the fuck async.
+        /// </summary>
+        /// <param name="ctx">The ctx.</param>
+        /// <returns>A Task.</returns>
+        [SlashCommand("clusterfuck", "Channels are urgh~", false)]
+        public static async Task ClusterFuckAsync(InteractionContext ctx)
+        {
+            await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("Loading.."));
+            var channels = await ctx.Guild.GetChannelsAsync();
+            Dictionary<ulong, List<ulong>> channel_test = new();
+            channel_test.Add(0, new List<ulong>());
+            foreach (var channel in channels.Where(c => c.Type == ChannelType.Category).OrderBy(c => c.Position))
+            {
+                channel_test.Add(channel.Id, new List<ulong>());
+            }
+
+            foreach(var channel in channels.Where(c => c.ParentId.HasValue && (c.Type == ChannelType.Text || c.Type == ChannelType.News)).OrderBy(c => c.Position))
+            {
+                channel_test[channel.ParentId.Value].Add(channel.Id);
+            }
+            foreach (var channel in channels.Where(c => c.ParentId.HasValue && (c.Type == ChannelType.Voice || c.Type == ChannelType.Stage)).OrderBy(c => c.Position))
+            {
+                channel_test[channel.ParentId.Value].Add(channel.Id);
+            }
+
+            foreach (var channel in channels.Where(c => !c.ParentId.HasValue && c.Type != ChannelType.Category && (c.Type == ChannelType.Text || c.Type == ChannelType.News)).OrderBy(c => c.Position))
+            {
+                channel_test[0].Add(channel.Id);
+            }
+
+            foreach (var channel in channels.Where(c => !c.ParentId.HasValue && c.Type != ChannelType.Category && (c.Type == ChannelType.Voice || c.Type == ChannelType.Stage)).OrderBy(c => c.Position))
+            {
+                channel_test[0].Add(channel.Id);
+            }
+
+            string json = JsonConvert.SerializeObject(channel_test);
+            await ctx.Channel.SendMessageAsync(json);
+            /*await ctx.Channel.SendMessageAsync(Formatter.Bold($"=== {ctx.Guild.Name} Channel List ==="));
+            await ctx.Channel.SendMessageAsync(Formatter.Bold("============================================"));
+            foreach (var category in channel_test)
+            {
+                if (category.Key != 0)
+                    await ctx.Channel.SendMessageAsync($"Category: <#{category.Key}>");
+                    
+                foreach (var channel in category.Value)
+                {
+                    await ctx.Channel.SendMessageAsync($"Channel: <#{channel}>");
+                }
+            }
+            await ctx.Channel.SendMessageAsync(Formatter.Bold("============================================"));*/
+        }
+
+        /// <summary>
+        /// Clusters the fuck2 async.
+        /// </summary>
+        /// <param name="ctx">The ctx.</param>
+        /// <returns>A Task.</returns>
+        [SlashCommand("clusterfuck2", "Channels are urgh~", false)]
+        public static async Task ClusterFuck2Async(InteractionContext ctx)
+        {
+            await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("Loading.."));
+            var channel_test = await ChannelHelper.GetOrderedChannelAsync(ctx.Guild);
+
+            string json = JsonConvert.SerializeObject(channel_test);
+            await ctx.Channel.SendMessageAsync(json);
+            /*await ctx.Channel.SendMessageAsync(Formatter.Bold($"=== {ctx.Guild.Name} Channel List ==="));
+            await ctx.Channel.SendMessageAsync(Formatter.Bold("============================================"));
+            foreach (var category in channel_test)
+            {
+                if (category.Key != 0)
+                    await ctx.Channel.SendMessageAsync($"<#{category.Key}>");
+                    
+                foreach (var channel in category.Value)
+                {
+                    await ctx.Channel.SendMessageAsync($"<#{channel.Id}>");
+                }
+            }
+            await ctx.Channel.SendMessageAsync(Formatter.Bold("============================================"));*/
+        }
+
         /// <summary>
         /// Views a task.
         /// </summary>
@@ -276,6 +359,57 @@ namespace DisCatSharp.Support.Commands.Tasks
                     $"```"
                 });
             }
+        }
+    }
+}
+
+namespace DisCatSharp.Helpers
+{
+    /// <summary>
+    /// Useful helper functions for <see cref="DiscordChannel">s.
+    /// </summary>
+    public class ChannelHelper
+    {
+        /// <summary>
+        /// Gets an ordered <see cref="DiscordChannel"> list.
+        /// Returns a <see cref="Dictionary"> where the key is an <see cref="ulong"> and can be mapped to <see cref="ChannelType.Category"> <see cref="DiscordChannel">s.
+        /// Ignore the 0 key here, because that indicates that this is the "has no category" list.
+        /// Each value contains a ordered list of text/news & voice/stage channels as <see cref="DiscordChannel">.
+        /// </summary>
+        /// <param name="guild">The <see cref="DiscordGuild"> to fetch the <see cref="DiscordChannel">s from.</param>
+        /// <returns>A ordered list of categories with its channels</returns>
+        public static async Task<Dictionary<ulong, List<DiscordChannel>>> GetOrderedChannelAsync(DiscordGuild guild)
+        {
+            IReadOnlyList<DiscordChannel> raw_channels = await guild.GetChannelsAsync();
+            
+            Dictionary<ulong, List<DiscordChannel>> ordered_channels = new();
+            
+            ordered_channels.Add(0, new List<DiscordChannel>());
+            
+            foreach (var channel in raw_channels.Where(c => c.Type == ChannelType.Category).OrderBy(c => c.Position))
+            {
+                ordered_channels.Add(channel.Id, new List<DiscordChannel>());
+            }
+
+            foreach (var channel in raw_channels.Where(c => c.ParentId.HasValue && (c.Type == ChannelType.Text || c.Type == ChannelType.News)).OrderBy(c => c.Position))
+            {
+                ordered_channels[channel.ParentId.Value].Add(channel);
+            }
+            foreach (var channel in raw_channels.Where(c => c.ParentId.HasValue && (c.Type == ChannelType.Voice || c.Type == ChannelType.Stage)).OrderBy(c => c.Position))
+            {
+                ordered_channels[channel.ParentId.Value].Add(channel);
+            }
+
+            foreach (var channel in raw_channels.Where(c => !c.ParentId.HasValue && c.Type != ChannelType.Category && (c.Type == ChannelType.Text || c.Type == ChannelType.News)).OrderBy(c => c.Position))
+            {
+                ordered_channels[0].Add(channel);
+            }
+            foreach (var channel in raw_channels.Where(c => !c.ParentId.HasValue && c.Type != ChannelType.Category && (c.Type == ChannelType.Voice || c.Type == ChannelType.Stage)).OrderBy(c => c.Position))
+            {
+                ordered_channels[0].Add(channel);
+            }
+
+            return ordered_channels;
         }
     }
 }

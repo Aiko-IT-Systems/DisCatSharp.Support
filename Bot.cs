@@ -142,7 +142,7 @@ namespace DisCatSharp.Support
                 .MinimumLevel.Debug()
                 .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
                 .CreateLogger();
-
+            
             DiscordConfiguration = new()
             {
                 Token = Config.DiscordConfig.BotToken,
