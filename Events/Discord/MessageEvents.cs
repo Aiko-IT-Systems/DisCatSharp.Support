@@ -24,6 +24,7 @@ namespace DisCatSharp.Support.Events.Discord
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The event args.</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "<Pending>")]
         public static async Task Client_MessageCreated(DiscordClient sender, MessageCreateEventArgs e)
         {
             await Task.Run(async() =>
