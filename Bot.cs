@@ -20,6 +20,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -119,9 +120,16 @@ namespace DisCatSharp.Support
         public async Task RunAsync()
         {
             await DiscordClient.ConnectAsync();
+            Console.OutputEncoding = new UTF8Encoding();
+            Console.BackgroundColor = ConsoleColor.DarkBlue;
             Console.WriteLine($"{"".PadRight(Console.WindowWidth - 2, '█')}");
+            Console.ResetColor();
+            Center("");
             Center($"Logged in as {DiscordClient.CurrentUser.UsernameWithDiscriminator} with prefix {Config.DiscordConfig.Prefix}");
+            Center("");
+            Console.BackgroundColor = ConsoleColor.DarkBlue;
             Console.WriteLine($"{"".PadRight(Console.WindowWidth - 2, '█')}");
+            Console.ResetColor();
             while (!ShutdownRequest.IsCancellationRequested)
             {
                 await Task.Delay(2000);
@@ -382,11 +390,15 @@ namespace DisCatSharp.Support
         {
             try
             {
+                Console.BackgroundColor = ConsoleColor.DarkBlue;
                 Console.Write("██");
                 Console.SetCursorPosition((Console.WindowWidth - s.Length) / 2, Console.CursorTop);
+                Console.ResetColor();
                 Console.Write(s);
+                Console.BackgroundColor = ConsoleColor.DarkBlue;
                 Console.SetCursorPosition((Console.WindowWidth - 4), Console.CursorTop);
                 Console.WriteLine("██");
+                Console.ResetColor();
             }
             catch (Exception)
             {

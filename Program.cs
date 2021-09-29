@@ -15,24 +15,26 @@ namespace DisCatSharp.Support
         /// </summary>
         public static void Main()
         {
-            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.BackgroundColor = ConsoleColor.DarkBlue;
             Console.WriteLine($"{"".PadRight(Console.WindowWidth - 2, '█')}");
-            Center(" ");
+            Console.ResetColor();
+            Center("");
             Center($"Initializing {Assembly.GetExecutingAssembly().FullName.Split(",")[0]}");
-            Center(" ");
+            Center("");
+            Console.BackgroundColor = ConsoleColor.DarkBlue;
             Console.WriteLine($"{"".PadRight(Console.WindowWidth - 2, '█')}");
             Console.ResetColor();
 
             var bot = new Bot(LogLevel.Debug);
             bot.RunAsync().Wait();
 
-            Console.ForegroundColor = ConsoleColor.Red;
+            Console.ForegroundColor = ConsoleColor.DarkRed;
             Console.WriteLine($"{"".PadRight(Console.WindowWidth - 2, '█')}");
-            Center(" ");
+            Center("");
             Center($"Shutdown of {Assembly.GetExecutingAssembly().FullName.Split(",")[0]} successfull");
-            Center(" ");
+            Center("");
             Center($"Press any key to exit the aplication..");
-            Center(" ");
+            Center("");
             Console.WriteLine($"{"".PadRight(Console.WindowWidth - 2, '█')}");
             Console.ResetColor();
             Console.ReadKey(true);
@@ -47,11 +49,15 @@ namespace DisCatSharp.Support
         {
             try
             {
+                Console.BackgroundColor = ConsoleColor.DarkBlue;
                 Console.Write("██");
                 Console.SetCursorPosition((Console.WindowWidth - s.Length) / 2, Console.CursorTop);
+                Console.ResetColor();
                 Console.Write(s);
+                Console.BackgroundColor = ConsoleColor.DarkBlue;
                 Console.SetCursorPosition((Console.WindowWidth - 4), Console.CursorTop);
                 Console.WriteLine("██");
+                Console.ResetColor();
             }
             catch (Exception)
             {
