@@ -147,7 +147,7 @@ namespace DisCatSharp.Support
         {
             ShutdownRequest = new();
             Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
+                .MinimumLevel.Warning()
                 .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
                 .CreateLogger();
             
