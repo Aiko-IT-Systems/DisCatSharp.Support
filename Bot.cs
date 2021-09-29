@@ -119,9 +119,9 @@ namespace DisCatSharp.Support
         public async Task RunAsync()
         {
             await DiscordClient.ConnectAsync();
-            Center(" ");
+            Console.WriteLine($"{"".PadRight(Console.WindowWidth - 2, '█')}");
             Center($"Logged in as {DiscordClient.CurrentUser.UsernameWithDiscriminator} with prefix {Config.DiscordConfig.Prefix}");
-            Center(" ");
+            Console.WriteLine($"{"".PadRight(Console.WindowWidth - 2, '█')}");
             while (!ShutdownRequest.IsCancellationRequested)
             {
                 await Task.Delay(2000);
