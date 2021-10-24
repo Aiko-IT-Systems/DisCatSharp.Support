@@ -31,7 +31,7 @@ namespace DisCatSharp.Support.Events.Discord
             {
                 if (true)//e.Guild.Id == Bot.Config.DiscordConfig.ApplicationCommandConfig.Dcs.GuildId)
                 {
-                    Regex reg = new(@"(?:https:\/\/bugs.aitsys.dev\/T(\d{1,4)|(?:T)(\d{1,4}))");
+                    Regex reg = new(@"\b(?:https:\/\/(?:bugs\.)?aitsys\.dev\/T(\d{1,4)|(?:T)(\d{1,4}))\b");
                     Match match = reg.Match(e.Message.Content);
                     if (match.Success)
                     {
