@@ -24,12 +24,11 @@ namespace DisCatSharp.Support.Events.Discord
         /// </summary>
         /// <param name="sender">The sender.</param>
         /// <param name="e">The event args.</param>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "<Pending>")]
         public static async Task Client_MessageCreated(DiscordClient sender, MessageCreateEventArgs e)
         {
             await Task.Run(async() =>
             {
-                if (true)//e.Guild.Id == Bot.Config.DiscordConfig.ApplicationCommandConfig.Dcs.GuildId)
+                if (e.Guild != null && e.Guild.Id == Bot.Config.DiscordConfig.ApplicationCommandConfig.Dcs.GuildId)
                 {
                     Regex reg = new(@"\b(?:https:\/\/(?:bugs\.)?aitsys\.dev\/T(\d{1,4)|(?:T)(\d{1,4}))\b");
                     Match match = reg.Match(e.Message.Content);
