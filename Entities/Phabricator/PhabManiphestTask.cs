@@ -25,26 +25,26 @@ namespace DisCatSharp.Support.Entities.Phabricator
         /// <param name="source">The source.</param>
         public PhabManiphestTask(ManiphestTask source, UserSearch user, Extended ext)
         {
-            this.Builder = new();
+            Builder = new();
             if (user != null && user.ErrorCode == null && ext != null)
             {
                 var userobject = user.Result.Data[0];
-                this.Builder.WithAuthor(userobject.Fields.RealName, ext.QResult[0].Uri, ext.QResult[0].Image);
+                Builder.WithAuthor(userobject.Fields.RealName, ext.QResult[0].Uri, ext.QResult[0].Image);
                 if (userobject.Fields.CustomDiscord.HasValue)
                 {
                     var duser = Bot.DiscordClient.GetUserAsync(userobject.Fields.CustomDiscord.Value).Result;
-                    this.Builder.AddField("Mapped Discord User", duser.Mention);
-                    this.Builder.WithThumbnail(duser.AvatarUrl);
+                    Builder.AddField("Mapped Discord User", duser.Mention);
+                    Builder.WithThumbnail(duser.AvatarUrl);
                 }
             }
-            this.Builder.WithTitle(Formatter.Bold(source.Title));
-            this.Builder.WithUrl($"{Bot.Config.ConduitConfig.ApiHost}T{source.Identifier}");
-            this.Builder.WithDescription(source.Description != null ? source.Description.Replace("lang=", "") : "none");
-            this.Builder.AddField("Status", source.StatusName ?? "unkown");
-            this.Builder.AddField("Priority", source.PriorityName ?? "unkown");
-            this.Builder.AddField("Created", Formatter.Timestamp(source.DateCreated, TimestampFormat.RelativeTime));
-            this.Builder.AddField("Last modified", Formatter.Timestamp(source.DateModified, TimestampFormat.RelativeTime));
-            this.Builder.Color = source.Status switch
+            Builder.WithTitle(Formatter.Bold(source.Title));
+            Builder.WithUrl($"{Bot.ConduitClient.Url}T{source.Identifier}");
+            Builder.WithDescription(source.Description != null ? source.Description.Replace("lang=", "") : "none");
+            Builder.AddField("Status", source.StatusName ?? "unkown");
+            Builder.AddField("Priority", source.PriorityName ?? "unkown");
+            Builder.AddField("Created", Formatter.Timestamp(source.DateCreated, TimestampFormat.RelativeTime));
+            Builder.AddField("Last modified", Formatter.Timestamp(source.DateModified, TimestampFormat.RelativeTime));
+            Builder.Color = source.Status switch
             {
                 "resolved" => DiscordColor.Green,
                 "testing" => DiscordColor.Orange,

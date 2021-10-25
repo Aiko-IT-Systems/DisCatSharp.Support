@@ -130,10 +130,10 @@ namespace DisCatSharp.Support.Commands
                     search.Add(new("ids", ids));
                     var stask = m.Search(null, search).First();
                     PhabManiphestTask etask = new(stask, null, null);
-                    var msg = await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"New feature request: https://aitsys.dev/T{task.Identifier}").AddEmbed(etask.GetEmbed()));
+                    var msg = await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"New feature request: {Bot.ConduitClient.Url}T{task.Identifier}").AddEmbed(etask.GetEmbed()));
                     await msg.CreateReactionAsync(DiscordEmoji.FromGuildEmote(Bot.DiscordClient, 887058605101183017));
                     await msg.CreateReactionAsync(DiscordEmoji.FromGuildEmote(Bot.DiscordClient, 887058605247987743));
-                    await end_request.ModifyAsync($"Request send.\nSee https://aitsys.dev/T{task.Identifier}");
+                    await end_request.ModifyAsync($"Request send.\nSee {Bot.ConduitClient.Url}T{task.Identifier}");
                 } catch(Exception ex)
                 {
                     await ctx.Member.SendMessageAsync(new DiscordEmbedBuilder()

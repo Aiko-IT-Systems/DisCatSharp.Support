@@ -62,7 +62,7 @@ namespace DisCatSharp.Support.Commands.Tasks
                 search.Add(new("ids", ids));
                 var stask = m.Search(null, search).First();
                 PhabManiphestTask etask = new(stask, null, null);
-                await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"Task created: https://bugs.aitsys.dev/T{task.Identifier}").AddEmbed(etask.GetEmbed()));
+                await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"Task created: {Bot.ConduitClient.Url}T{task.Identifier}").AddEmbed(etask.GetEmbed()));
             }
             catch (Exception ex)
             {
@@ -206,7 +206,7 @@ namespace DisCatSharp.Support.Commands.Tasks
                     extuser = JsonConvert.DeserializeObject<Extended>(data2);
                 }
                 PhabManiphestTask embed = new(task, user, extuser);
-                await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"Task informations for {Formatter.Bold(task.Title)}\nhttps://bugs.aitsys.dev/T{task.Identifier}").AddEmbed(embed.GetEmbed()));
+                await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"Task informations for {Formatter.Bold(task.Title)}\n{Bot.ConduitClient.Url}T{task.Identifier}").AddEmbed(embed.GetEmbed()));
             }
             catch (Exception ex)
             {
@@ -231,7 +231,7 @@ namespace DisCatSharp.Support.Commands.Tasks
         public static async Task CloseTaskAsync(InteractionContext ctx, 
             [Autocomplete(typeof(ConduitOpenTaskProvider)), Option("task_id", "The task", true)] string task_id)
         {
-            await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder() { IsEphemeral = false, Content = "Deleting Task..." });
+            await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder() { IsEphemeral = false, Content = "Closing Task..." });
             try
             {
                 Maniphest m = new(Bot.ConduitClient);
@@ -242,7 +242,7 @@ namespace DisCatSharp.Support.Commands.Tasks
                 var task = m.Search(null, search).First();
                 task.Status = "resolved";
                 m.Edit(task);
-                await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"Task closed: {Formatter.Bold(task.Title)}\nhttps://bugs.aitsys.dev/T{task.Identifier}"));
+                await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"Task closed: {Formatter.Bold(task.Title)}\n{Bot.ConduitClient.Url}T{task.Identifier}"));
             }
             catch (Exception ex)
             {
@@ -346,7 +346,7 @@ namespace DisCatSharp.Support.Commands.Tasks
                 search.Add(new("ids", ids));
                 var stask = m.Search(null, search).First();
                 PhabManiphestTask etask = new(stask, null, null);
-                await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"Task created: https://bugs.aitsys.dev/T{task.Identifier}").AddEmbed(etask.GetEmbed()));
+                await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"Task created: {Bot.ConduitClient.Url}T{task.Identifier}").AddEmbed(etask.GetEmbed()));
             }
             catch (Exception ex)
             {

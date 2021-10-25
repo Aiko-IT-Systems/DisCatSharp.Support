@@ -40,7 +40,7 @@ namespace DisCatSharp.Support.Entities.Phabricator
         /// </summary>
         [JsonIgnore]
         public DateTimeOffset? DateCreated =>
-            DateTimeOffset.TryParse(this._dateCreated.ToString(), CultureInfo.InvariantCulture, DateTimeStyles.None, out var dto) ? dto : null;
+            DateTimeOffset.TryParse(_dateCreated.ToString(), CultureInfo.InvariantCulture, DateTimeStyles.None, out var dto) ? dto : null;
 
         [JsonProperty("dateModified", NullValueHandling = NullValueHandling.Ignore)]
         internal int _dateModified;
@@ -50,7 +50,7 @@ namespace DisCatSharp.Support.Entities.Phabricator
         /// </summary>
         [JsonIgnore]
         public DateTimeOffset? DateModified =>
-            DateTimeOffset.TryParse(this._dateModified.ToString(), CultureInfo.InvariantCulture, DateTimeStyles.None, out var dto) ? dto : null;
+            DateTimeOffset.TryParse(_dateModified.ToString(), CultureInfo.InvariantCulture, DateTimeStyles.None, out var dto) ? dto : null;
 
         [JsonProperty("policy", NullValueHandling = NullValueHandling.Ignore)]
         public Policy Policy;

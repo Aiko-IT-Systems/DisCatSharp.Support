@@ -32,9 +32,9 @@
     <ProjectReference Include="..\DisCatSharp\DisCatSharp\DisCatSharp.csproj" />
     <ProjectReference Include="..\DisCatSharp\DisCatSharp.Common\DisCatSharp.Common.csproj" />
     <ProjectReference Include="..\DisCatSharp\DisCatSharp.Interactivity\DisCatSharp.Interactivity.csproj" />
-    <ProjectReference Include="..\DisCatSharp.Phabricator\DisCatSharp.Phabricator.csproj" />
     <ProjectReference Include="..\DisCatSharp\DisCatSharp.CommandsNext\DisCatSharp.CommandsNext.csproj" />
     <ProjectReference Include="..\DisCatSharp\DisCatSharp.ApplicationCommands\DisCatSharp.ApplicationCommands.csproj" />
+    <ProjectReference Include="..\DisCatSharp.Phabricator\DisCatSharp.Phabricator.csproj" />
   </ItemGroup>
 
   <ItemGroup>
