@@ -60,12 +60,12 @@ namespace DisCatSharp.Support.Commands
                     g.Icon = null;
                     g.Description = null;
                     g.AuditLogReason = "Clean up";
-                    if (target_guild.PremiumTier == PremiumTier.Tier_1 || target_guild.PremiumTier == PremiumTier.Tier_2 || target_guild.PremiumTier == PremiumTier.Tier_3)
+                    if (target_guild.PremiumTier == PremiumTier.TierOne || target_guild.PremiumTier == PremiumTier.TierTwo || target_guild.PremiumTier == PremiumTier.TierThree)
                     {
                         g.Splash = null;
                     }
 
-                    if (target_guild.PremiumTier == PremiumTier.Tier_2 || target_guild.PremiumTier == PremiumTier.Tier_3)
+                    if (target_guild.PremiumTier == PremiumTier.TierTwo || target_guild.PremiumTier == PremiumTier.TierThree)
                     {
                         g.Banner = null;
                     }
@@ -241,7 +241,7 @@ namespace DisCatSharp.Support.Commands
                 await fs.DisposeAsync();
                 File.Delete(ctx.Guild.IconHash + (ctx.Guild.PremiumTier != PremiumTier.None && target_guild.PremiumTier != PremiumTier.None ? ".gif" : ".png"));
 
-                if (target_guild.PremiumTier == PremiumTier.Tier_1 || target_guild.PremiumTier == PremiumTier.Tier_2 || target_guild.PremiumTier == PremiumTier.Tier_3)
+                if (target_guild.PremiumTier == PremiumTier.TierOne || target_guild.PremiumTier == PremiumTier.TierTwo || target_guild.PremiumTier == PremiumTier.TierThree)
                 {
                     wc.DownloadFile(new Uri(ctx.Guild.SplashUrl), ctx.Guild.SplashHash + ".png");
                     var sfs = File.OpenRead(ctx.Guild.SplashHash + ".png");
@@ -255,7 +255,7 @@ namespace DisCatSharp.Support.Commands
                     File.Delete(ctx.Guild.SplashHash + ".png");
                 }
 
-                if (target_guild.PremiumTier == PremiumTier.Tier_2 || target_guild.PremiumTier == PremiumTier.Tier_3)
+                if (target_guild.PremiumTier == PremiumTier.TierTwo || target_guild.PremiumTier == PremiumTier.TierThree)
                 {
                     wc.DownloadFile(new Uri(ctx.Guild.BannerUrl), ctx.Guild.BannerHash + ".png");
                     var bfs = File.OpenRead(ctx.Guild.BannerHash + ".png");
@@ -288,18 +288,18 @@ namespace DisCatSharp.Support.Commands
                 
                 int max_emoji = target_guild.PremiumTier switch {
                     PremiumTier.None => 50,
-                    PremiumTier.Tier_1 => 100,
-                    PremiumTier.Tier_2 => 150,
-                    PremiumTier.Tier_3 => 250,
+                    PremiumTier.TierOne => 100,
+                    PremiumTier.TierTwo => 150,
+                    PremiumTier.TierThree => 250,
                     _ =>  50
                 };
 
                 int max_sticker = target_guild.PremiumTier switch
                 {
                     PremiumTier.None => 0,
-                    PremiumTier.Tier_1 => 15,
-                    PremiumTier.Tier_2 => 30,
-                    PremiumTier.Tier_3 => 60,
+                    PremiumTier.TierOne => 15,
+                    PremiumTier.TierTwo => 30,
+                    PremiumTier.TierThree => 60,
                     _ => 0
                 };
                 int ei = 0;

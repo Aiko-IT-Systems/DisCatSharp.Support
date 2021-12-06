@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <StartupObject>DisCatSharp.Support.Program</StartupObject>
     <ApplicationIcon>facivon.ico</ApplicationIcon>
   </PropertyGroup>
@@ -34,7 +34,7 @@
     <ProjectReference Include="..\DisCatSharp\DisCatSharp.Interactivity\DisCatSharp.Interactivity.csproj" />
     <ProjectReference Include="..\DisCatSharp\DisCatSharp.CommandsNext\DisCatSharp.CommandsNext.csproj" />
     <ProjectReference Include="..\DisCatSharp\DisCatSharp.ApplicationCommands\DisCatSharp.ApplicationCommands.csproj" />
-    <ProjectReference Include="..\DisCatSharp.Phabricator\DisCatSharp.Phabricator.csproj" />
+    <ProjectReference Include="..\DisCatSharp.Phabricator\DisCatSharp.Phabricator\DisCatSharp.Phabricator.csproj" />
   </ItemGroup>
 
   <ItemGroup>

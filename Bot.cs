@@ -177,8 +177,7 @@ namespace DisCatSharp.Support
                 EnableDefaultHelp = true,
                 EnableDms = true,
                 DmHelp = true,
-                UseDefaultCommandHandler = true,
-                Services = null
+                UseDefaultCommandHandler = true
             };
 
             InteractivityConfiguration = new()
@@ -201,10 +200,7 @@ namespace DisCatSharp.Support
                 ResponseBehavior = InteractionResponseBehavior.Respond
             };
 
-            ApplicationCommandsConfiguration = new()
-            {
-                Services = null
-            };
+            ApplicationCommandsConfiguration = new(null);
         }
 
         /// <summary>
@@ -245,7 +241,9 @@ namespace DisCatSharp.Support
             DiscordClient.GuildUpdated += Client_GuildUpdated;
             DiscordClient.GuildDeleted += Client_GuildDeleted;
             */
-            DiscordClient.MessageCreated += async (sender, args) => await Task.Run(async () => await MessageEvents.Client_MessageCreated(sender, args));/*
+            DiscordClient.MessageCreated += async (sender, args) => await Task.Run(async () => await MessageEvents.Client_MessageCreated(sender, args));
+            DiscordClient.ComponentInteractionCreated += async (sender, args) => await Task.Run(async () => await InteractionEvents.InteractionCreated(sender, args));
+            /*
             DiscordClient.MessageReactionAdded += Client_MessageReactionAdded;
 
             DiscordClient.GuildMemberAdded += Client_GuildMemberAdded;
@@ -294,7 +292,9 @@ namespace DisCatSharp.Support
             DiscordClient.GuildUpdated -= Client_GuildUpdated;
             DiscordClient.GuildDeleted -= Client_GuildDeleted;
             */
-            DiscordClient.MessageCreated -= MessageEvents.Client_MessageCreated;/*
+            DiscordClient.MessageCreated -= MessageEvents.Client_MessageCreated;
+            DiscordClient.ComponentInteractionCreated -= InteractionEvents.InteractionCreated;
+            /*
             DiscordClient.MessageReactionAdded -= Client_MessageReactionAdded;
 
             DiscordClient.GuildMemberAdded -= Client_GuildMemberAdded;
