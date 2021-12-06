@@ -55,7 +55,7 @@ namespace DisCatSharp.Support.Commands
         /// <param name="priority">The priority.</param>
         /// <param name="description">The description.</param>
         /// <returns>The url of the added task.</returns>
-        [SlashCommand("task-add", "Add a task", true)]
+        [SlashCommand("task-add", "Add a task", false)]
         public static async Task AddTaskAsync(InteractionContext ctx, [Option("title", "Title of task")] string title, [ChoiceProvider(typeof(TaskPriorityChoiceProvider)), Option("priority", "Priority of task")] string priority, [Option("description", "Description of task")] string description)
         {
             await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder() { IsEphemeral = false, Content = "Generating Task..." });
