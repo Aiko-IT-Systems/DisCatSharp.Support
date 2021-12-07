@@ -16,38 +16,6 @@ namespace DisCatSharp.Support.Commands
     internal class SupportGuild : ApplicationCommandsModule
     {
         /// <summary>
-        /// Assigns the selfroles.
-        /// </summary>
-        /// <param name="ctx">The command context.</param>
-        /// <param name="rolenum">The selected role.</param>
-        /// <param name="assign">If true, assign.</param>
-        [SlashCommand("selfroles", "Assign selfroles", true)]
-        public static async Task AssignSelfrolesAsync(InteractionContext ctx, [Choice("Changelog Pings", "r1"), Choice("Poll Pings", "r2"), Choice("View Git Feeds", "r3"), Choice("View Commits", "r4"), Choice("View Discord Commits", "r5")][Option("role", "The role to assign")] string selfrole, [Option("assign", "If true, assign. If false, revoke.")] bool assign)
-        {
-            DiscordRole role = selfrole switch {
-                "r1" => ctx.Guild.GetRole(872657990556200981),
-                "r2" => ctx.Guild.GetRole(891501159481745409),
-                "r3" => ctx.Guild.GetRole(891501151592251412),
-                "r4" => ctx.Guild.GetRole(891501156013072404),
-                "r5" => ctx.Guild.GetRole(891501167081816074),
-                _ => null
-            };
-
-            if (assign)
-            {
-                await ctx.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource, new DiscordInteractionResponseBuilder() { IsEphemeral = true });
-                await ctx.Member.GrantRoleAsync(role, "Self Role assign");
-                await ctx.EditResponseAsync(new DiscordWebhookBuilder() { Content = $"{role.Mention} assigned." });
-            }
-            else
-            {
-                await ctx.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource, new DiscordInteractionResponseBuilder() { IsEphemeral = true });
-                await ctx.Member.RevokeRoleAsync(role, "Self Role remove");
-                await ctx.EditResponseAsync(new DiscordWebhookBuilder() { Content = $"{role.Mention} removed." });
-            }
-        }
-
-        /// <summary>
         /// Adds a task to https://aitsys.dev.
         /// </summary>
         /// <param name="ctx">The interaction context.</param>

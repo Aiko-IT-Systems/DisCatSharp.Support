@@ -23,7 +23,7 @@ namespace DisCatSharp.Support.Events.Discord
             {
                 await e.Interaction.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource, new() { IsEphemeral = true });
                 DiscordMember member = await e.Guild.GetMemberAsync(e.User.Id);
-                DiscordRole role = e.Guild.GetRole(858099411900956682);
+                DiscordRole role = e.Guild.GetRole(917585444697440286);
                 if (member.Roles.Contains(role))
                 {
                     await e.Interaction.CreateFollowupMessageAsync(new() { Content = "You already accepted the rules.", IsEphemeral = true });
@@ -32,6 +32,21 @@ namespace DisCatSharp.Support.Events.Discord
                 {
                     await member.GrantRoleAsync(role, "Rules accepted");
                     await e.Interaction.CreateFollowupMessageAsync(new() { Content = "Rules accepted.", IsEphemeral = true });
+                }
+            }
+            else if (e.Id == "member-ready")
+            {
+                await e.Interaction.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource, new() { IsEphemeral = true });
+                DiscordMember member = await e.Guild.GetMemberAsync(e.User.Id);
+                DiscordRole role = e.Guild.GetRole(858099411900956682);
+                if (member.Roles.Contains(role))
+                {
+                    await e.Interaction.CreateFollowupMessageAsync(new() { Content = "You are already a member.", IsEphemeral = true });
+                }
+                else
+                {
+                    await member.GrantRoleAsync(role, "Rules accepted");
+                    await e.Interaction.CreateFollowupMessageAsync(new() { Content = "Welcome to DisCatSharp!\n\nTake a look into <#891500835543056384> and <#917583400162967552> :3", IsEphemeral = true });
                 }
             }
             #endregion
