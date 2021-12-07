@@ -12,23 +12,21 @@ namespace DisCatSharp.Support.Events.Discord
     {
         public static async Task InteractionCreated(DiscordClient sender, ComponentInteractionCreateEventArgs e)
         {
+            #region Default ack
             if (e.Id == "ack")
             {
                 await e.Interaction.CreateResponseAsync(InteractionResponseType.DeferredMessageUpdate);
             }
+            #endregion
+            #region Rules
             else if (e.Id == "rules-accept-858089281214087179")
             {
                 await e.Interaction.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource, new() { IsEphemeral = true });
                 DiscordMember member = await e.Guild.GetMemberAsync(e.User.Id);
                 DiscordRole role = e.Guild.GetRole(858099411900956682);
-                DiscordRole muterole = e.Guild.GetRole(888477455105544274);
                 if (member.Roles.Contains(role))
                 {
                     await e.Interaction.CreateFollowupMessageAsync(new() { Content = "You already accepted the rules.", IsEphemeral = true });
-                }
-                else if (member.Roles.Contains(muterole))
-                {
-                    await e.Interaction.CreateFollowupMessageAsync(new() { Content = "You are muted!.", IsEphemeral = true });
                 }
                 else
                 {
@@ -36,47 +34,57 @@ namespace DisCatSharp.Support.Events.Discord
                     await e.Interaction.CreateFollowupMessageAsync(new() { Content = "Rules accepted.", IsEphemeral = true });
                 }
             }
-            else if (e.Id == "changelog-pings-858089281214087179")
+            #endregion
+            #region Pings
+            else if (e.Id == "selfrole-announcements")
             {
                 await e.Interaction.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource, new() { IsEphemeral = true });
                 DiscordMember member = await e.Guild.GetMemberAsync(e.User.Id);
-                DiscordRole role = e.Guild.GetRole(872657990556200981);
-                DiscordRole muterole = e.Guild.GetRole(888477455105544274);
+                DiscordRole role = e.Guild.GetRole(917608912151248927);
                 if (member.Roles.Contains(role))
                 {
-                    await e.Interaction.CreateFollowupMessageAsync(new() { Content = "You already enabled changelog pings.\nUse /selfroles to disable it.", IsEphemeral = true });
-                }
-                else if (member.Roles.Contains(muterole))
-                {
-                    await e.Interaction.CreateFollowupMessageAsync(new() { Content = "You are muted!.", IsEphemeral = true });
-                }
-                else
-                {
-                    await member.GrantRoleAsync(role, "Changelog ping enabled");
-                    await e.Interaction.CreateFollowupMessageAsync(new() { Content = "You will be notified on important updates.\nUse /selfroles to disable it.", IsEphemeral = true });
-                }
-            }
-            else if (e.Id == $"selfrole-891501159481745409-add")
-            {
-                await e.Interaction.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource, new() { IsEphemeral = true });
-                DiscordMember member = await e.Guild.GetMemberAsync(e.User.Id);
-                DiscordRole role = e.Guild.GetRole(891501159481745409);
-                DiscordRole muterole = e.Guild.GetRole(888477455105544274);
-                if (member.Roles.Contains(role))
-                {
-                    await e.Interaction.CreateFollowupMessageAsync(new() { Content = "Error: You already got the role.", IsEphemeral = true });
-                }
-                else if (member.Roles.Contains(muterole))
-                {
-                    await e.Interaction.CreateFollowupMessageAsync(new() { Content = "Warning: You are muted!", IsEphemeral = true });
+                    await member.RevokeRoleAsync(role);
+                    await e.Interaction.CreateFollowupMessageAsync(new() { Content = "Success: Ping role removed.", IsEphemeral = true });
                 }
                 else
                 {
                     await member.GrantRoleAsync(role);
-                    await e.Interaction.CreateFollowupMessageAsync(new() { Content = "Success: Role assigned.", IsEphemeral = true });
+                    await e.Interaction.CreateFollowupMessageAsync(new() { Content = "Success: Ping role assigned.", IsEphemeral = true });
                 }
             }
-            else if (e.Id == $"selfrole-891501159481745409-remove")
+            else if (e.Id == "selfrole-ping-changelogs")
+            {
+                await e.Interaction.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource, new() { IsEphemeral = true });
+                DiscordMember member = await e.Guild.GetMemberAsync(e.User.Id);
+                DiscordRole role = e.Guild.GetRole(872657990556200981);
+                if (member.Roles.Contains(role))
+                {
+                    await member.RevokeRoleAsync(role);
+                    await e.Interaction.CreateFollowupMessageAsync(new() { Content = "Success: Ping role removed.", IsEphemeral = true });
+                }
+                else
+                {
+                    await member.GrantRoleAsync(role);
+                    await e.Interaction.CreateFollowupMessageAsync(new() { Content = "Success: Ping role assigned.", IsEphemeral = true });
+                }
+            }
+            else if (e.Id == "selfrole-ping-serverupdates")
+            {
+                await e.Interaction.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource, new() { IsEphemeral = true });
+                DiscordMember member = await e.Guild.GetMemberAsync(e.User.Id);
+                DiscordRole role = e.Guild.GetRole(917608674619449398);
+                if (member.Roles.Contains(role))
+                {
+                    await member.RevokeRoleAsync(role);
+                    await e.Interaction.CreateFollowupMessageAsync(new() { Content = "Success: Ping role removed.", IsEphemeral = true });
+                }
+                else
+                {
+                    await member.GrantRoleAsync(role);
+                    await e.Interaction.CreateFollowupMessageAsync(new() { Content = "Success: Ping role assigned.", IsEphemeral = true });
+                }
+            }
+            else if (e.Id == "selfrole-ping-polls")
             {
                 await e.Interaction.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource, new() { IsEphemeral = true });
                 DiscordMember member = await e.Guild.GetMemberAsync(e.User.Id);
@@ -84,26 +92,90 @@ namespace DisCatSharp.Support.Events.Discord
                 if (member.Roles.Contains(role))
                 {
                     await member.RevokeRoleAsync(role);
-                    await e.Interaction.CreateFollowupMessageAsync(new() { Content = "Success: Role removed.", IsEphemeral = true });
+                    await e.Interaction.CreateFollowupMessageAsync(new() { Content = "Success: Ping role removed.", IsEphemeral = true });
                 }
                 else
                 {
-                    await e.Interaction.CreateFollowupMessageAsync(new() { Content = "Error: You don't have the role.", IsEphemeral = true });
+                    await member.GrantRoleAsync(role);
+                    await e.Interaction.CreateFollowupMessageAsync(new() { Content = "Success: Ping role assigned.", IsEphemeral = true });
                 }
             }
+            else if (e.Id == "selfrole-ping-gaming")
+            {
+                await e.Interaction.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource, new() { IsEphemeral = true });
+                DiscordMember member = await e.Guild.GetMemberAsync(e.User.Id);
+                DiscordRole role = e.Guild.GetRole(917608695301550090);
+                if (member.Roles.Contains(role))
+                {
+                    await member.RevokeRoleAsync(role);
+                    await e.Interaction.CreateFollowupMessageAsync(new() { Content = "Success: Ping role removed.", IsEphemeral = true });
+                }
+                else
+                {
+                    await member.GrantRoleAsync(role);
+                    await e.Interaction.CreateFollowupMessageAsync(new() { Content = "Success: Ping role assigned.", IsEphemeral = true });
+                }
+            }
+            #endregion
+            #region Projects
+            else if (e.Id == $"selfrole-dcs")
+            {
+                await e.Interaction.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource, new() { IsEphemeral = true });
+                DiscordMember member = await e.Guild.GetMemberAsync(e.User.Id);
+                DiscordRole role = e.Guild.GetRole(917609333716578324);
+                if (member.Roles.Contains(role))
+                {
+                    await member.RevokeRoleAsync(role);
+                    await e.Interaction.CreateFollowupMessageAsync(new() { Content = "Success: Project role removed.", IsEphemeral = true });
+                }
+                else
+                {
+                    await member.GrantRoleAsync(role);
+                    await e.Interaction.CreateFollowupMessageAsync(new() { Content = "Success: Project role assigned.", IsEphemeral = true });
+                }
+            }
+            else if (e.Id == $"selfrole-dcsm")
+            {
+                await e.Interaction.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource, new() { IsEphemeral = true });
+                DiscordMember member = await e.Guild.GetMemberAsync(e.User.Id);
+                DiscordRole role = e.Guild.GetRole(917609327987138641);
+                if (member.Roles.Contains(role))
+                {
+                    await member.RevokeRoleAsync(role);
+                    await e.Interaction.CreateFollowupMessageAsync(new() { Content = "Success: Project role removed.", IsEphemeral = true });
+                }
+                else
+                {
+                    await member.GrantRoleAsync(role);
+                    await e.Interaction.CreateFollowupMessageAsync(new() { Content = "Success: Project role assigned.", IsEphemeral = true });
+                }
+            }
+            else if (e.Id == $"selfrole-dcsp")
+            {
+                await e.Interaction.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource, new() { IsEphemeral = true });
+                DiscordMember member = await e.Guild.GetMemberAsync(e.User.Id);
+                DiscordRole role = e.Guild.GetRole(917609330877026355);
+                if (member.Roles.Contains(role))
+                {
+                    await member.RevokeRoleAsync(role);
+                    await e.Interaction.CreateFollowupMessageAsync(new() { Content = "Success: Project role removed.", IsEphemeral = true });
+                }
+                else
+                {
+                    await member.GrantRoleAsync(role);
+                    await e.Interaction.CreateFollowupMessageAsync(new() { Content = "Success: Project role assigned.", IsEphemeral = true });
+                }
+            }
+            #endregion
+            #region View Git Logs
             else if (e.Id == $"selfrole-891501151592251412-add")
             {
                 await e.Interaction.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource, new() { IsEphemeral = true });
                 DiscordMember member = await e.Guild.GetMemberAsync(e.User.Id);
                 DiscordRole role = e.Guild.GetRole(891501151592251412);
-                DiscordRole muterole = e.Guild.GetRole(888477455105544274);
                 if (member.Roles.Contains(role))
                 {
                     await e.Interaction.CreateFollowupMessageAsync(new() { Content = "Error: You already got the role.", IsEphemeral = true });
-                }
-                else if (member.Roles.Contains(muterole))
-                {
-                    await e.Interaction.CreateFollowupMessageAsync(new() { Content = "Warning: You are muted!", IsEphemeral = true });
                 }
                 else
                 {
@@ -126,19 +198,16 @@ namespace DisCatSharp.Support.Events.Discord
                     await e.Interaction.CreateFollowupMessageAsync(new() { Content = "Error: You don't have the role.", IsEphemeral = true });
                 }
             }
+            #endregion
+            #region View Commits
             else if (e.Id == $"selfrole-891501156013072404-add")
             {
                 await e.Interaction.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource, new() { IsEphemeral = true });
                 DiscordMember member = await e.Guild.GetMemberAsync(e.User.Id);
                 DiscordRole role = e.Guild.GetRole(891501156013072404);
-                DiscordRole muterole = e.Guild.GetRole(888477455105544274);
                 if (member.Roles.Contains(role))
                 {
                     await e.Interaction.CreateFollowupMessageAsync(new() { Content = "Error: You already got the role.", IsEphemeral = true });
-                }
-                else if (member.Roles.Contains(muterole))
-                {
-                    await e.Interaction.CreateFollowupMessageAsync(new() { Content = "Warning: You are muted!", IsEphemeral = true });
                 }
                 else
                 {
@@ -161,19 +230,16 @@ namespace DisCatSharp.Support.Events.Discord
                     await e.Interaction.CreateFollowupMessageAsync(new() { Content = "Error: You don't have the role.", IsEphemeral = true });
                 }
             }
+            #endregion
+            #region View Discord Commits
             else if (e.Id == $"selfrole-891501167081816074-add")
             {
                 await e.Interaction.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource, new() { IsEphemeral = true });
                 DiscordMember member = await e.Guild.GetMemberAsync(e.User.Id);
                 DiscordRole role = e.Guild.GetRole(891501167081816074);
-                DiscordRole muterole = e.Guild.GetRole(888477455105544274);
                 if (member.Roles.Contains(role))
                 {
                     await e.Interaction.CreateFollowupMessageAsync(new() { Content = "Error: You already got the role.", IsEphemeral = true });
-                }
-                else if (member.Roles.Contains(muterole))
-                {
-                    await e.Interaction.CreateFollowupMessageAsync(new() { Content = "Warning: You are muted!", IsEphemeral = true });
                 }
                 else
                 {
@@ -196,6 +262,8 @@ namespace DisCatSharp.Support.Events.Discord
                     await e.Interaction.CreateFollowupMessageAsync(new() { Content = "Error: You don't have the role.", IsEphemeral = true });
                 }
             }
+            #endregion
+            #region If nothing else
             else
             {
                 try
@@ -204,6 +272,7 @@ namespace DisCatSharp.Support.Events.Discord
                 }
                 catch (NotFoundException) { /* This interaction was already responded to. */ }
             }
+            #endregion
         }
     }
 }
