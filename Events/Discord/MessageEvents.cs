@@ -4,6 +4,8 @@ using DisCatSharp.Phabricator;
 using DisCatSharp.Phabricator.Applications.Maniphest;
 using DisCatSharp.Support.Entities.Phabricator;
 
+using Microsoft.Extensions.Logging;
+
 using Newtonsoft.Json;
 
 using System;
@@ -22,7 +24,7 @@ namespace DisCatSharp.Support.Events.Discord
         /// <summary>
         /// Fired when a new message gets created.
         /// </summary>
-        /// <param name="sender">The sender.</param>
+        /// <param name="sender">The discord client aka sender.</param>
         /// <param name="e">The event args.</param>
         public static async Task Client_MessageCreated(DiscordClient sender, MessageCreateEventArgs e)
         {
@@ -36,12 +38,40 @@ namespace DisCatSharp.Support.Events.Discord
                     {
                         await SearchAndSendTaskAsync(match, e.Message, e.Channel);
                     }
+                    else if (e.Channel.Id == 889571019902308393 || e.Channel.Id == 920257691551686666)
+                    {
+                        await PublishMessagesAsync(sender, e);
+                    }
                     else
                     {
                         await Task.FromResult(true);
                     }
                 }
             });
+        }
+
+        /// <summary>
+        /// Publishes messages in announcement channels.
+        /// </summary>
+        /// <param name="sender">The discord client aka sender.</param>
+        /// <param name="e">The event args.</param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        private static async Task PublishMessagesAsync(DiscordClient sender, MessageCreateEventArgs e)
+        {
+            if (e.Message.WebhookMessage)
+            {
+                try
+                {
+                    await e.Channel.CrosspostMessageAsync(e.Message);
+                }
+                catch(Exception ex)
+                {
+                    sender.Logger.LogError("Unable to publish message.");
+                    sender.Logger.LogError(ex.Message);
+                    sender.Logger.LogError(ex.StackTrace);
+                }
+            }
         }
 
         /// <summary>
