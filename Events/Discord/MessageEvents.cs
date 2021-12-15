@@ -61,15 +61,18 @@ namespace DisCatSharp.Support.Events.Discord
         {
             if (e.Message.WebhookMessage)
             {
-                try
+                if (e.Message.Embeds[0].Title.ToLower().Contains("new commit") || e.Message.Embeds[0].Title.ToLower().Contains("new comment on commit"))
                 {
-                    await e.Channel.CrosspostMessageAsync(e.Message);
-                }
-                catch(Exception ex)
-                {
-                    sender.Logger.LogError("Unable to publish message.");
-                    sender.Logger.LogError(ex.Message);
-                    sender.Logger.LogError(ex.StackTrace);
+                    try
+                    {
+                        await e.Channel.CrosspostMessageAsync(e.Message);
+                    }
+                    catch (Exception ex)
+                    {
+                        sender.Logger.LogError("Unable to publish message.");
+                        sender.Logger.LogError(ex.Message);
+                        sender.Logger.LogError(ex.StackTrace);
+                    }
                 }
             }
         }
