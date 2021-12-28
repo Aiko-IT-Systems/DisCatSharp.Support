@@ -1,7 +1,9 @@
 ﻿using DisCatSharp.ApplicationCommands;
+using DisCatSharp.ApplicationCommands.Attributes;
 using DisCatSharp.Entities;
 using DisCatSharp.Phabricator;
 using DisCatSharp.Phabricator.Applications.Maniphest;
+using DisCatSharp.Support.Providers;
 
 using System;
 using System.Collections.Generic;
@@ -15,6 +17,12 @@ namespace DisCatSharp.Support.Commands
     /// </summary>
     internal class SupportGuild : ApplicationCommandsModule
     {
+        [SlashCommand("bind", "Binds a user to an aitsys.dev account", false)]
+        public static async Task BindUser(InteractionContext ctx, [Option("user", "User to bind to a aitsys.dev account")] DiscordUser user, [Autocomplete(typeof(ConduitUserProvider)), Option("account", "aitsys.dev account", true)] string account)
+        {
+            await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent($"We want to map {user.UsernameWithDiscriminator} to {account}"));
+        }
+
         /// <summary>
         /// Adds a task to https://aitsys.dev.
         /// </summary>
