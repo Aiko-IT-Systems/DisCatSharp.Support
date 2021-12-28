@@ -147,7 +147,7 @@ namespace DisCatSharp.Support
         {
             ShutdownRequest = new();
             Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Warning()
+                .MinimumLevel.Debug()
                 .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
                 .CreateLogger();
             
@@ -266,6 +266,25 @@ namespace DisCatSharp.Support
             ApplicationCommandsExtension.ContextMenuExecuted += ApplicationCommand_ContextMenuExecuted;
 
             CommandsNextExtension.CommandErrored += CommandNext_CommandErrored;*/
+
+            ApplicationCommandsExtension.ApplicationCommandsModuleStartupFinished += ApplicationCommandsExtension_ApplicationCommandsModuleStartupFinished;
+        }
+
+        private static Task ApplicationCommandsExtension_ApplicationCommandsModuleStartupFinished(ApplicationCommandsExtension sender, ApplicationCommands.EventArgs.ApplicationCommandsModuleStartupFinishedEventArgs e)
+        {
+            sender.Client.Logger.LogInformation($"Application commands module has finished the startup.");
+            var guild_cmd_count = 0;
+            foreach (var cmd in e.RegisteredGuildCommands)
+            {
+                guild_cmd_count += cmd.Value.Select(x => x.Name).Distinct().Count();
+            }
+            sender.Client.Logger.LogInformation($"Stats: \n" +
+                $" - Found {e.GuildsWithoutScope.Count} guilds without the applications.commands scope\n" +
+                $" - Registered {e.RegisteredGlobalCommands.Count} global commands\n" +
+                $" - Registered {guild_cmd_count} commands on {e.RegisteredGuildCommands.Count} guilds."
+            );
+
+            return Task.CompletedTask;
         }
 
         /// <summary>

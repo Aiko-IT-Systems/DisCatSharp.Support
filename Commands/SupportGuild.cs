@@ -3,7 +3,10 @@ using DisCatSharp.ApplicationCommands.Attributes;
 using DisCatSharp.Entities;
 using DisCatSharp.Phabricator;
 using DisCatSharp.Phabricator.Applications.Maniphest;
+using DisCatSharp.Support.Entities.Phabricator;
 using DisCatSharp.Support.Providers;
+
+using Newtonsoft.Json;
 
 using System;
 using System.Collections.Generic;
@@ -20,7 +23,35 @@ namespace DisCatSharp.Support.Commands
         [SlashCommand("bind", "Binds a user to an aitsys.dev account", false)]
         public static async Task BindUser(InteractionContext ctx, [Option("user", "User to bind to a aitsys.dev account")] DiscordUser user, [Autocomplete(typeof(ConduitUserProvider)), Option("account", "aitsys.dev account", true)] string account)
         {
-            await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent($"We want to map {user.UsernameWithDiscriminator} to {account}"));
+            await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent($"We want to map {user.UsernameWithDiscriminator} to {account}").AsEphemeral(true));
+            var extconstraints = new Dictionary<string, dynamic>
+                {
+                    { "phids", new List<string>{ account } }
+                };
+            var tdata2 = Bot.ConduitClient.CallMethod("user.query", extconstraints);
+            var data2 = JsonConvert.SerializeObject(tdata2);
+            Extended extuser = JsonConvert.DeserializeObject<Extended>(data2);
+
+            await ctx.FollowUpAsync(new DiscordFollowupMessageBuilder().WithContent($"User: {extuser.QResult.First().RealName}").AsEphemeral(true));
+
+            var transaction = new PhabricatorTransaction(account);
+            transaction.Transactions.Add(new TransactionObject("custom.discord", user.Id.ToString()));
+
+            string res = null;
+
+            try
+            {
+                res = Bot.ConduitClient.CallMethod("user.edit", transaction.SerializeParameters());
+            }
+            catch (ConduitException ex)
+            {
+                await ctx.FollowUpAsync(new DiscordFollowupMessageBuilder().AsEphemeral(true).WithContent(ex.Message));
+                return;
+            }
+            finally
+            {
+                await ctx.FollowUpAsync(new DiscordFollowupMessageBuilder().AsEphemeral(true).WithContent("Done"));
+            }
         }
 
         /// <summary>
