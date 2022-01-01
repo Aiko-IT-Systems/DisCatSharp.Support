@@ -6,6 +6,8 @@ using DisCatSharp.Phabricator.Applications.Maniphest;
 using DisCatSharp.Support.Entities.Phabricator;
 using DisCatSharp.Support.Providers;
 
+using Microsoft.Extensions.Logging;
+
 using Newtonsoft.Json;
 
 using System;
@@ -42,6 +44,7 @@ namespace DisCatSharp.Support.Commands
             try
             {
                 res = Bot.ConduitClient.CallMethod("user.edit", transaction.SerializeParameters());
+                ctx.Client.Logger.LogDebug(res);
             }
             catch (ConduitException ex)
             {

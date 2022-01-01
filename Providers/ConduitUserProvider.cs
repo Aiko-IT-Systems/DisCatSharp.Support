@@ -32,8 +32,10 @@ namespace DisCatSharp.Support.Providers
             {
                 return null;
             }
-            var searchUser = new Dictionary<string, dynamic>();
-            searchUser.Add("nameLike", context.FocusedOption.Value.ToString().ToLower());
+            var searchUser = new Dictionary<string, dynamic>
+            {
+                { "nameLike", context.FocusedOption.Value.ToString().ToLower() }
+            };
             var constraints = new Dictionary<string, dynamic>
             {
                 { "constraints", searchUser }

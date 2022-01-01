@@ -200,7 +200,7 @@ namespace DisCatSharp.Support
                 ResponseBehavior = InteractionResponseBehavior.Respond
             };
 
-            ApplicationCommandsConfiguration = new(null);
+            ApplicationCommandsConfiguration = new();
         }
 
         /// <summary>
