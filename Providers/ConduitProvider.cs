@@ -26,7 +26,7 @@ namespace DisCatSharp.Support.Providers
         {
             return new DiscordApplicationCommandOptionChoice[]
             {
-                    new DiscordApplicationCommandOptionChoice("Unbreak now!", "ubreak"),
+                    new DiscordApplicationCommandOptionChoice("Unbreak now!", "unbreak"),
                     new DiscordApplicationCommandOptionChoice("Triage", "triage"),
                     new DiscordApplicationCommandOptionChoice("High", "high"),
                     new DiscordApplicationCommandOptionChoice("Normal", "normal"),
@@ -48,7 +48,7 @@ namespace DisCatSharp.Support.Providers
         {
             return new DiscordSelectComponentOption[]
             {
-                    new DiscordSelectComponentOption("Unbreak now!", "ubreak", null, false),
+                    new DiscordSelectComponentOption("Unbreak now!", "unbreak", null, false),
                     new DiscordSelectComponentOption("Needs Triage", "triage", null, false),
                     new DiscordSelectComponentOption("High", "high", null, false),
                     new DiscordSelectComponentOption("Normal", "normal", null, true),
