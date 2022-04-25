@@ -357,7 +357,7 @@ namespace DisCatSharp.Support
 
             foreach (var command in applicationCommands)
             {
-                ApplicationCommandsExtension.RegisterCommands(command, Config.DiscordConfig.ApplicationCommandConfig.Dcs.GuildId, permissions =>
+                ApplicationCommandsExtension.RegisterGuildCommands(command, Config.DiscordConfig.ApplicationCommandConfig.Dcs.GuildId, permissions =>
                 {
                     foreach(var roleId in Config.DiscordConfig.ApplicationCommandConfig.Dcs.RoleIds)
                     {
@@ -365,7 +365,7 @@ namespace DisCatSharp.Support
                     }
                 });
 
-                ApplicationCommandsExtension.RegisterCommands(command, Config.DiscordConfig.ApplicationCommandConfig.DcsDev.GuildId, permissions =>
+                ApplicationCommandsExtension.RegisterGuildCommands(command, Config.DiscordConfig.ApplicationCommandConfig.DcsDev.GuildId, permissions =>
                 {
                     foreach (var roleId in Config.DiscordConfig.ApplicationCommandConfig.DcsDev.RoleIds)
                     {
