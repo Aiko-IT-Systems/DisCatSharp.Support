@@ -33,17 +33,17 @@ namespace DisCatSharp.Support.Entities.Phabricator
                 if (userobject.Fields.CustomDiscord.HasValue)
                 {
                     var duser = Bot.DiscordClient.GetUserAsync(userobject.Fields.CustomDiscord.Value).Result;
-                    Builder.AddField("Mapped Discord User", duser.Mention);
+                    Builder.AddField(new("Mapped Discord User", duser.Mention));
                     Builder.WithThumbnail(duser.AvatarUrl);
                 }
             }
             Builder.WithTitle(Formatter.Bold(source.Title));
             Builder.WithUrl($"{Bot.ConduitClient.Url}T{source.Identifier}");
             Builder.WithDescription(source.Description != null ? source.Description.Replace("lang=", "") : "none");
-            Builder.AddField("Status", source.StatusName ?? "unkown");
-            Builder.AddField("Priority", source.PriorityName ?? "unkown");
-            Builder.AddField("Created", Formatter.Timestamp(source.DateCreated, TimestampFormat.RelativeTime));
-            Builder.AddField("Last modified", Formatter.Timestamp(source.DateModified, TimestampFormat.RelativeTime));
+            Builder.AddField(new("Status", source.StatusName ?? "unkown"));
+            Builder.AddField(new("Priority", source.PriorityName ?? "unkown"));
+            Builder.AddField(new("Created", Formatter.Timestamp(source.DateCreated, TimestampFormat.RelativeTime)));
+            Builder.AddField(new("Last modified", Formatter.Timestamp(source.DateModified, TimestampFormat.RelativeTime)));
             Builder.Color = source.Status switch
             {
                 "resolved" => DiscordColor.Green,

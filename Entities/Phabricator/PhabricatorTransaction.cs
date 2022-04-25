@@ -20,9 +20,11 @@ namespace DisCatSharp.Support.Entities.Phabricator
 
         public Dictionary<string, dynamic> SerializeParameters()
         {
-            Dictionary<string, dynamic> parameters = new();
-            parameters.Add("transactions", this.Transactions);
-            parameters.Add("objectIdentifier", this.ObjectIdentifier);
+            Dictionary<string, dynamic> parameters = new()
+            {
+                { "transactions", this.Transactions },
+                { "objectIdentifier", this.ObjectIdentifier }
+            };
 
             return parameters;
         }

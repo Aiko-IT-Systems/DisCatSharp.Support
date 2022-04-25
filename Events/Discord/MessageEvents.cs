@@ -89,8 +89,10 @@ namespace DisCatSharp.Support.Events.Discord
             {
                 Maniphest m = new(Bot.ConduitClient);
                 List<ApplicationEditorSearchConstraint> search = new();
-                List<int> ids = new();
-                ids.Add(Convert.ToInt32(match.Groups[2].Value));
+                List<int> ids = new()
+                {
+                    Convert.ToInt32(match.Groups[2].Value)
+                };
                 search.Add(new("ids", ids));
                 var task = m.Search(null, search).First();
                 UserSearch user = null;

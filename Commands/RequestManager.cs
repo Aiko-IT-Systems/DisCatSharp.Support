@@ -125,8 +125,10 @@ namespace DisCatSharp.Support.Commands
                     task.SetSubscribers(Bot.Config.ConduitConfig.Subscribers);
                     m.Edit(task);
                     List<ApplicationEditorSearchConstraint> search = new();
-                    List<int> ids = new();
-                    ids.Add(task.Identifier);
+                    List<int> ids = new()
+                    {
+                        task.Identifier
+                    };
                     search.Add(new("ids", ids));
                     var stask = m.Search(null, search).First();
                     PhabManiphestTask etask = new(stask, null, null);

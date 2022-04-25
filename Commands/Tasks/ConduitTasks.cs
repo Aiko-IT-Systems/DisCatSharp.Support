@@ -57,8 +57,10 @@ namespace DisCatSharp.Support.Commands.Tasks
                 task.SetSubscribers(Bot.Config.ConduitConfig.Subscribers);
                 m.Edit(task);
                 List<ApplicationEditorSearchConstraint> search = new();
-                List<int> ids = new();
-                ids.Add(task.Identifier);
+                List<int> ids = new()
+                {
+                    task.Identifier
+                };
                 search.Add(new("ids", ids));
                 var stask = m.Search(null, search).First();
                 PhabManiphestTask etask = new(stask, null, null);
@@ -92,8 +94,10 @@ namespace DisCatSharp.Support.Commands.Tasks
             {
                 Maniphest m = new(Bot.ConduitClient);
                 List<ApplicationEditorSearchConstraint> search = new();
-                List<int> ids = new();
-                ids.Add(Convert.ToInt32(task_id));
+                List<int> ids = new()
+                {
+                    Convert.ToInt32(task_id)
+                };
                 search.Add(new("ids", ids));
                 var task = m.Search(null, search).First();
                 UserSearch user = null;
@@ -155,8 +159,10 @@ namespace DisCatSharp.Support.Commands.Tasks
             {
                 Maniphest m = new(Bot.ConduitClient);
                 List<ApplicationEditorSearchConstraint> search = new();
-                List<int> ids = new();
-                ids.Add(Convert.ToInt32(task_id));
+                List<int> ids = new()
+                {
+                    Convert.ToInt32(task_id)
+                };
                 search.Add(new("ids", ids));
                 var task = m.Search(null, search).First();
                 task.Status = "resolved";
@@ -260,8 +266,10 @@ namespace DisCatSharp.Support.Commands.Tasks
                 task.SetSubscribers(Bot.Config.ConduitConfig.Subscribers);
                 m.Edit(task);
                 List<ApplicationEditorSearchConstraint> search = new();
-                List<int> ids = new();
-                ids.Add(task.Identifier);
+                List<int> ids = new()
+                {
+                    task.Identifier
+                };
                 search.Add(new("ids", ids));
                 var stask = m.Search(null, search).First();
                 PhabManiphestTask etask = new(stask, null, null);
@@ -300,11 +308,12 @@ namespace DisCatSharp.Helpers
         public static async Task<Dictionary<ulong, List<DiscordChannel>>> GetOrderedChannelAsync(DiscordGuild guild)
         {
             IReadOnlyList<DiscordChannel> raw_channels = await guild.GetChannelsAsync();
-            
-            Dictionary<ulong, List<DiscordChannel>> ordered_channels = new();
-            
-            ordered_channels.Add(0, new List<DiscordChannel>());
-            
+
+            Dictionary<ulong, List<DiscordChannel>> ordered_channels = new()
+            {
+                { 0, new List<DiscordChannel>() }
+            };
+
             foreach (var channel in raw_channels.Where(c => c.Type == ChannelType.Category).OrderBy(c => c.Position))
             {
                 ordered_channels.Add(channel.Id, new List<DiscordChannel>());

@@ -121,8 +121,10 @@ namespace DisCatSharp.Support.Providers
 
             Maniphest m = new(Bot.ConduitClient);
             List<ApplicationEditorSearchConstraint> search = new();
-            List<string> projects = new();
-            projects.Add("DisCatSharp");
+            List<string> projects = new()
+            {
+                "DisCatSharp"
+            };
             search.Add(new("projects", projects));
             var tasks = m.Search("open", search);
             if (!tasks.Any())
@@ -172,8 +174,10 @@ namespace DisCatSharp.Support.Providers
 
             Maniphest m = new(Bot.ConduitClient);
             List<ApplicationEditorSearchConstraint> search = new();
-            List<string> projects = new();
-            projects.Add("DisCatSharp");
+            List<string> projects = new()
+            {
+                "DisCatSharp"
+            };
             search.Add(new("projects", projects));
             var tasks = m.Search("all", search);
             if (!tasks.Any())

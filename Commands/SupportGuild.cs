@@ -38,12 +38,10 @@ namespace DisCatSharp.Support.Commands
 
             var transaction = new PhabricatorTransaction(account);
             transaction.Transactions.Add(new TransactionObject("custom.discord", user.Id.ToString()));
-
-            string res = null;
-
+            
             try
             {
-                res = Bot.ConduitClient.CallMethod("user.edit", transaction.SerializeParameters());
+                string res = Bot.ConduitClient.CallMethod("user.edit", transaction.SerializeParameters());
                 ctx.Client.Logger.LogDebug(res);
             }
             catch (ConduitException ex)
@@ -176,11 +174,11 @@ namespace DisCatSharp.Support.Commands
             eb.WithTitle(invite.Guild.Name);
             eb.WithAuthor("Discord Guild Lookup", invite.Url, invite.Guild.IconUrl);
             eb.WithDescription(invite.Guild.Description);
-            eb.AddField("Features", Formatter.InlineCode(fstr));
-            eb.AddField("ID", invite.Guild.Id.ToString());
-            eb.AddField("Inviter", invite.Inviter != null ? invite.Inviter.Username + "#" + invite.Inviter.Discriminator : "None");
-            eb.AddField("Verification Level", invite.Guild.VerificationLevel.ToString());
-            eb.AddField("Vanity", invite.Guild.VanityUrlCode ?? "none");
+            eb.AddField(new("Features", Formatter.InlineCode(fstr)));
+            eb.AddField(new("ID", invite.Guild.Id.ToString()));
+            eb.AddField(new("Inviter", invite.Inviter != null ? invite.Inviter.Username + "#" + invite.Inviter.Discriminator : "None"));
+            eb.AddField(new("Verification Level", invite.Guild.VerificationLevel.ToString()));
+            eb.AddField(new("Vanity", invite.Guild.VanityUrlCode ?? "none"));
             eb.WithImageUrl(invite.Guild.BannerUrl);
             eb.WithThumbnail(invite.Guild.SplashUrl);
             eb.WithFooter("Created " + invite.Guild.CreationTimestamp.DateTime.ToString());
