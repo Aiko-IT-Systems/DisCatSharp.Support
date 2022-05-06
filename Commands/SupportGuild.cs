@@ -22,7 +22,7 @@ namespace DisCatSharp.Support.Commands
     /// </summary>
     internal class SupportGuild : ApplicationCommandsModule
     {
-        [SlashCommand("bind", "Binds a user to an aitsys.dev account", false)]
+        [SlashCommand("bind", "Binds a user to an aitsys.dev account")]
         public static async Task BindUser(InteractionContext ctx, [Option("user", "User to bind to a aitsys.dev account")] DiscordUser user, [Autocomplete(typeof(ConduitUserProvider)), Option("account", "aitsys.dev account", true)] string account)
         {
             await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent($"We want to map {user.UsernameWithDiscriminator} to {account}").AsEphemeral(true));
@@ -63,7 +63,7 @@ namespace DisCatSharp.Support.Commands
         /// <param name="priority">The priority.</param>
         /// <param name="description">The description.</param>
         /// <returns>The url of the added task.</returns>
-        [SlashCommand("task-add", "Add a task", false)]
+        [SlashCommand("task-add", "Add a task")]
         public static async Task AddTaskAsync(InteractionContext ctx, [Option("title", "Title of task")] string title, [ChoiceProvider(typeof(TaskPriorityChoiceProvider)), Option("priority", "Priority of task")] string priority, [Option("description", "Description of task")] string description)
         {
             await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder() { IsEphemeral = false, Content = "Generating Task..." });
@@ -137,7 +137,7 @@ namespace DisCatSharp.Support.Commands
         /// Shutdowns the bot down.
         /// </summary>
         /// <param name="ctx">The command context.</param>
-        [SlashCommand("shutdown", "Bot shutdown", false)]
+        [SlashCommand("shutdown", "Bot shutdown")]
         public static async Task ShutdownAsync(InteractionContext ctx)
         {
             await ctx.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("Shutdown request"));
@@ -158,7 +158,7 @@ namespace DisCatSharp.Support.Commands
         /// Shutdowns the bot down.
         /// </summary>
         /// <param name="ctx">The command context.</param>
-        [SlashCommand("preview", "Guild preview", false)]
+        [SlashCommand("preview", "Guild preview")]
         public static async Task GetGuildPreviewAsync(InteractionContext ctx, [Option("invite_code", "The invite to check")] string invite_code)
         {
             await ctx.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("Loading"));
@@ -190,7 +190,7 @@ namespace DisCatSharp.Support.Commands
         /// Gets invite for a guild the bot is on.
         /// </summary>
         /// <param name="ctx">The command context.</param>
-        [SlashCommand("get_invite", "Get a guild invite", false)]
+        [SlashCommand("get_invite", "Get a guild invite")]
         public static async Task GetGuildInvite(InteractionContext ctx, [Option("gid", "The guild id")] string gid)
         {
             await ctx.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("Loading"));

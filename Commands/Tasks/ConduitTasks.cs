@@ -21,7 +21,7 @@ namespace DisCatSharp.Support.Commands.Tasks
     /// <summary>
     /// The conduit tasks.
     /// </summary>
-    [SlashCommandGroup("tasks", "Tasks management for bugs.aitsys.dev", false)]
+    [SlashCommandGroup("tasks", "Tasks management for bugs.aitsys.dev")]
     public class ConduitTasks : ApplicationCommandsModule
     {
         /// <summary>
@@ -197,7 +197,7 @@ namespace DisCatSharp.Support.Commands.Tasks
         /// <param name="title">The title.</param>
         /// <param name="description">The description.</param>
         /// <returns>The url of the added task.</returns>
-        [ContextMenu(ApplicationCommandType.Message, "Create a task", false)]
+        [ContextMenu(ApplicationCommandType.Message, "Create a task")]
         public static async Task CreateTaskFromMessageAsync(ContextMenuContext ctx)
         {
             await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder() { IsEphemeral = false, Content = "Generating Task..." });

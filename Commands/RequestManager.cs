@@ -16,7 +16,7 @@ namespace DisCatSharp.Support.Commands
     /// <summary>
     /// The request manager.
     /// </summary>
-    [SlashCommandGroup("request", "Request management", true)]
+    [SlashCommandGroup("request", "Request management")]
     internal class RequestManager : ApplicationCommandsModule
     {
         /// <summary>
@@ -24,7 +24,7 @@ namespace DisCatSharp.Support.Commands
         /// </summary>
         /// <param name="ic">The interaction context.</param>
         /// <param name="module">Target module.</param>
-        [SlashCommand("add", "Add a new request", true)]
+        [SlashCommand("add", "Add a new request")]
         public static async Task RequestFeatureAsync(InteractionContext ctx,
             [Choice("DisCatSharp", "[Core]"),
             Choice("DisCatSharp.ApplicationCommands", "[ApplicationCommands]"),
