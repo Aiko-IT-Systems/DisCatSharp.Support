@@ -160,7 +160,7 @@ namespace DisCatSharp.Support
                 MinimumLogLevel = LogLevel,
                 ShardCount = 1,
                 ShardId = 0,
-                Intents = DiscordIntents.AllUnprivileged,
+                Intents = DiscordIntents.AllUnprivileged | DiscordIntents.GuildMembers | DiscordIntents.MessageContent,
                 MobileStatus = false,
                 UseCanary = true,
                 AutoRefreshChannelCache = false,
