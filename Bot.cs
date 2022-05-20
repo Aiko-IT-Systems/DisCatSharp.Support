@@ -360,6 +360,8 @@ namespace DisCatSharp.Support
                 ApplicationCommandsExtension.RegisterGuildCommands(command, Config.DiscordConfig.ApplicationCommandConfig.Dcs.GuildId);
 
                 ApplicationCommandsExtension.RegisterGuildCommands(command, Config.DiscordConfig.ApplicationCommandConfig.DcsDev.GuildId);
+
+                ApplicationCommandsExtension.RegisterGuildCommands(command, 858089274087309313);
             }
         }
 
