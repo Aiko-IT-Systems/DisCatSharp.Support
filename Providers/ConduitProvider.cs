@@ -51,7 +51,7 @@ namespace DisCatSharp.Support.Providers
                     new DiscordSelectComponentOption("Unbreak now!", "unbreak", null, false),
                     new DiscordSelectComponentOption("Needs Triage", "triage", null, false),
                     new DiscordSelectComponentOption("High", "high", null, false),
-                    new DiscordSelectComponentOption("Normal", "normal", null, true),
+                    new DiscordSelectComponentOption("Normal", "normal", null, false),
                     new DiscordSelectComponentOption("Low", "low", null, false),
                     new DiscordSelectComponentOption("Wishlist", "wish", null, false)
             };
