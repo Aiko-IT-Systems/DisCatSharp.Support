@@ -189,7 +189,7 @@ namespace DisCatSharp.Support.Commands.Tasks
     public class ConduitTasksContextMenu : ApplicationCommandsModule
     {
         /// <summary>
-        /// Creates a task for https://bugs.aitsys.dev.
+        /// Creates a task for https://aitsys.dev.
         /// </summary>
         /// <param name="ctx">The interaction context.</param>
         /// <param name="type">The type.</param>
@@ -197,97 +197,75 @@ namespace DisCatSharp.Support.Commands.Tasks
         /// <param name="title">The title.</param>
         /// <param name="description">The description.</param>
         /// <returns>The url of the added task.</returns>
-        [ContextMenu(ApplicationCommandType.Message, "Create a task")]
+        [ContextMenu(ApplicationCommandType.Message, "Convert to task")]
         public static async Task CreateTaskFromMessageAsync(ContextMenuContext ctx)
         {
-            await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder() { IsEphemeral = false, Content = "Generating Task..." });
-            try
-            {
-                var interactivity = ctx.Client.GetInteractivity();
+            var interactivity = ctx.Client.GetInteractivity();
+            DiscordInteractionModalBuilder builder = new();
+            builder.WithTitle("Task Information");
+            builder.AddTextComponent(new DiscordTextComponent(TextComponentStyle.Small, "title", "Title"));
+			builder.AddTextComponent(new DiscordTextComponent(TextComponentStyle.Paragraph, "description", "Description", defaultValue: ctx.TargetMessage.Content));
+            builder.AddSelectComponent(new DiscordSelectComponent("Type", "Is it a bug?", ConduitTaskTypeSelectProvider.GetSelectOptions(), "type", 1, 1));
+			builder.AddSelectComponent(new DiscordSelectComponent("Priority", "Panic!", ConduitTaskPrioritySelectProvider.GetSelectOptions(), "priority", 1, 1));
 
-                var type_select = await ctx.FollowUpAsync(new DiscordFollowupMessageBuilder().AddComponents(new DiscordSelectComponent($"task-create-type-{ctx.TargetMessage.Id}", "Select the type of the task", ConduitTaskTypeSelectProvider.GetSelectOptions(), 1, 1, false)).WithContent("What's the type?"));
+			await ctx.CreateModalResponseAsync(builder);
 
-                var type_request = await interactivity.WaitForSelectAsync(type_select, x => x.Id == $"task-create-type-{ctx.TargetMessage.Id}" && x.User.Id == ctx.User.Id, TimeSpan.FromSeconds(60));
+			var interaction = await interactivity.WaitForModalAsync(builder.CustomId, TimeSpan.FromMinutes(5));
 
-                if (type_request.TimedOut)
-                {
-                    await ctx.DeleteFollowupAsync(type_select.Id);
-                    await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("Timed out. Task creation failed"));
-                    return;
-                }
+			if (!interaction.TimedOut)
+			{
+				try
+				{
+					var modalResult = interaction.Result.Interaction;
+					var modalData = interaction.Result.Interaction.Data;
+					await modalResult.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("Generating..").AsEphemeral());
 
-                await ctx.DeleteFollowupAsync(type_select.Id);
+					var type = modalData.Components.First(x => x.Components.First().CustomId == "type").Components.First().Values.First();
+					var title = modalData.Components.First(x => x.Components.First().CustomId == "title").Components.First().Value;
+					var priority = modalData.Components.First(x => x.Components.First().CustomId == "priority").Components.First().Values.First();
+					var description = modalData.Components.First(x => x.Components.First().CustomId == "description").Components.First().Value;
 
-                var type = type_request.Result.Values[0];
 
-                var prio_select = await ctx.FollowUpAsync(new DiscordFollowupMessageBuilder().AddComponents(new DiscordSelectComponent($"task-create-prio-{ctx.TargetMessage.Id}", "Select the priority of this task", ConduitTaskPrioritySelectProvider.GetSelectOptions(), 1, 1, false)).WithContent("What's the priority?"));
+					Maniphest m = new(Bot.ConduitClient);
+					ManiphestTask task = new()
+					{
+						Title = $"{type} {title}",
+						Description = description + $"\n\nTicket source: {ctx.TargetMessage.JumpLink.AbsoluteUri}",
+						Priority = priority,
+						EditPolicy = Bot.Config.ConduitConfig.Subscribers[0]
 
-                var prio_request = await interactivity.WaitForSelectAsync(prio_select, x => x.Id == $"task-create-prio-{ctx.TargetMessage.Id}" && x.User.Id == ctx.User.Id, TimeSpan.FromSeconds(60));
-
-                if (prio_request.TimedOut)
-                {
-                    await ctx.DeleteFollowupAsync(prio_select.Id);
-                    await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("Timed out. Task creation failed"));
-                    return;
-                }
-
-                await ctx.DeleteFollowupAsync(prio_select.Id);
-
-                var priority = prio_request.Result.Values[0];
-
-                var title_response = await ctx.FollowUpAsync(new DiscordFollowupMessageBuilder().WithContent("What's the title of the task?"));
-
-                var title_request = await interactivity.WaitForMessageAsync(m => m.Author.Id == ctx.User.Id && m.ChannelId == ctx.Channel.Id, TimeSpan.FromSeconds(60));
-
-                if (title_request.TimedOut)
-                {
-                    await ctx.DeleteFollowupAsync(title_response.Id);
-                    await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent("Timed out. Task creation failed"));
-                    return;
-                }
-
-                await ctx.DeleteFollowupAsync(title_response.Id);
-
-                var title = title_request.Result.Content;
-
-                await title_request.Result.DeleteAsync($"Interaction [task-create-{ctx.TargetMessage.Id}]");
-
-                Maniphest m = new(Bot.ConduitClient);
-                ManiphestTask task = new()
-                {
-                    Title = $"{type} {title}",
-                    Description = ctx.TargetMessage.Content + $"\n\nTicket source: {ctx.TargetMessage.JumpLink.AbsoluteUri}",
-                    Priority = priority,
-                    EditPolicy = Bot.Config.ConduitConfig.Subscribers[0]
-
-                };
-                m.Edit(task);
-                task.SetProjects(Bot.Config.ConduitConfig.Projects);
-                task.SetSubscribers(Bot.Config.ConduitConfig.Subscribers);
-                m.Edit(task);
-                List<ApplicationEditorSearchConstraint> search = new();
-                List<int> ids = new()
-                {
-                    task.Identifier
-                };
-                search.Add(new("ids", ids));
-                var stask = m.Search(null, search).First();
-                PhabManiphestTask etask = new(stask, null, null);
-                await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"Task created: {Bot.ConduitClient.Url}T{task.Identifier}").AddEmbed(etask.GetEmbed()));
-            }
-            catch (Exception ex)
-            {
-                await ctx.Channel.SendMessageAsync(new DiscordEmbedBuilder()
-                {
-                    Title = "Error",
-                    Description = $"Exception: {ex.Message}\n" +
-                    $"```\n" +
-                    $"{ex.StackTrace}\n" +
-                    $"```"
-                });
-            }
-        }
-    }
+					};
+					m.Edit(task);
+					task.SetProjects(Bot.Config.ConduitConfig.Projects);
+					task.SetSubscribers(Bot.Config.ConduitConfig.Subscribers);
+					m.Edit(task);
+					List<ApplicationEditorSearchConstraint> search = new();
+					List<int> ids = new()
+				{
+					task.Identifier
+				};
+					search.Add(new("ids", ids));
+					var stask = m.Search(null, search).First();
+					PhabManiphestTask etask = new(stask, null, null);
+					await modalResult.EditOriginalResponseAsync(new DiscordWebhookBuilder().WithContent($"Task created: {Bot.ConduitClient.Url}T{task.Identifier}").AddEmbed(etask.GetEmbed()));
+					
+				}
+                catch (Exception ex)
+				{
+					await ctx.Channel.SendMessageAsync(new DiscordEmbedBuilder()
+					{
+						Title = "Error",
+						Description = $"Exception: {ex.Message}\n" +
+					$"```\n" +
+					$"{ex.StackTrace}\n" +
+					$"```"
+					});
+				}
+			}
+			else
+                await ctx.FollowUpAsync(new DiscordFollowupMessageBuilder().AsEphemeral().WithContent($"{ctx.User.Mention}, you were too slow."));
+		}
+	}
 }
 
 namespace DisCatSharp.Helpers

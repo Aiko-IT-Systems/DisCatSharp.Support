@@ -286,7 +286,8 @@ namespace DisCatSharp.Support.Events.Discord
                     await e.Interaction.CreateResponseAsync(InteractionResponseType.DeferredMessageUpdate);
                 }
                 catch (NotFoundException) { /* This interaction was already responded to. */ }
-            }
+				catch (BadRequestException) { /* This interaction was already responded to. */ }
+			}
             #endregion
         }
     }
