@@ -113,7 +113,7 @@ namespace DisCatSharp.Support.Commands.Tasks
                 };
                     var tdata = Bot.ConduitClient.CallMethod("user.search", constraints);
                     var data = JsonConvert.SerializeObject(tdata);
-
+                    
                     user = JsonConvert.DeserializeObject<UserSearch>(data);
                     var username = new List<string>
                 {
