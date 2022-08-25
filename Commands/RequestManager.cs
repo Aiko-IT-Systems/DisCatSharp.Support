@@ -38,7 +38,7 @@ namespace DisCatSharp.Support.Commands
 
             await ctx.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent($"Please take a look in my dm").AsEphemeral(true));
             var chan = await ctx.Client.GetChannelAsync(1012470877784391800);
-            var thr = await chan.CreateThreadAsync($"Request from {ctx.User.Mention}", ThreadAutoArchiveDuration.OneWeek, reason: "Feature request creation");
+            var thr = await chan.CreatePostAsync($"Request from {ctx.User.Mention}", new DiscordMessageBuilder().WithContent("Creating.."), reason: "Feature request creation");
             var interactivity = ctx.Client.GetInteractivity();
             
             DiscordMessageBuilder mb = new();
