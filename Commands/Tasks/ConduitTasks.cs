@@ -25,7 +25,7 @@ namespace DisCatSharp.Support.Commands.Tasks
     public class ConduitTasks : ApplicationCommandsModule
     {
         /// <summary>
-        /// Creates a task for https://bugs.aitsys.dev.
+        /// Creates a task for https://aitsys.dev.
         /// </summary>
         /// <param name="ctx">The interaction context.</param>
         /// <param name="type">The type.</param>

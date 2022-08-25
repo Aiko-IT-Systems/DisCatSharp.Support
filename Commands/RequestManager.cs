@@ -35,9 +35,10 @@ namespace DisCatSharp.Support.Commands
             Choice("DisCatSharp.Phabricator", "[Phabricator]"),
             Option("module", "For which module do you want a new feature")] string module)
         {
-            //await ic.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent($"Not implemented, but we know already, that you want a feature for {module.Replace("[", "").Replace("]", "")}").AsEphemeral(false));
-            await ctx.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent($"Please take a look in my dm").AsEphemeral(false));
-            await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"{ctx.User.Mention} is creating a request"));
+
+            await ctx.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent($"Please take a look in my dm").AsEphemeral(true));
+            var chan = await ctx.Client.GetChannelAsync(1012470877784391800);
+            var thr = await chan.CreateThreadAsync($"Request from {ctx.User.Mention}", ThreadAutoArchiveDuration.OneWeek, reason: "Feature request creation");
             var interactivity = ctx.Client.GetInteractivity();
             
             DiscordMessageBuilder mb = new();
@@ -102,6 +103,7 @@ namespace DisCatSharp.Support.Commands
             else if(confirm_result.Result.Id == $"{ctx.User.Id}-{title_request.Id}-no")
             {
                 await confirm_result.Result.Interaction.CreateResponseAsync(InteractionResponseType.UpdateMessage, new DiscordInteractionResponseBuilder().WithContent("Request aborted."));
+                await thr.DeleteAsync("Feature request aborted!");
                 await ctx.DeleteResponseAsync();
                 return;
             } 
@@ -132,10 +134,16 @@ namespace DisCatSharp.Support.Commands
                     search.Add(new("ids", ids));
                     var stask = m.Search(null, search).First();
                     PhabManiphestTask etask = new(stask, null, null);
-                    var msg = await ctx.EditResponseAsync(new DiscordWebhookBuilder().WithContent($"New feature request: {Bot.ConduitClient.Url}T{task.Identifier}").AddEmbed(etask.GetEmbed()));
-                    await msg.CreateReactionAsync(DiscordEmoji.FromGuildEmote(Bot.DiscordClient, 887058605101183017));
-                    await msg.CreateReactionAsync(DiscordEmoji.FromGuildEmote(Bot.DiscordClient, 887058605247987743));
-                    await end_request.ModifyAsync($"Request send.\nSee {Bot.ConduitClient.Url}T{task.Identifier}");
+                    await thr.ModifyAsync(x =>
+                    {
+                        x.Name = $"{module} {title}";
+                    });
+                    var msg = await thr.GetMessageAsync(thr.Id);
+                    await msg.ModifyAsync(new DiscordMessageBuilder().WithContent(description));
+                    await msg.CreateReactionAsync(DiscordEmoji.FromGuildEmote(Bot.DiscordClient, 888443149524041748));
+                    await msg.CreateReactionAsync(DiscordEmoji.FromGuildEmote(Bot.DiscordClient, 888443149121376317));
+					await thr.AddMemberAsync(ctx.Member);
+					await end_request.ModifyAsync($"Request send.\nSee {Bot.ConduitClient.Url}T{task.Identifier}");
                 } catch(Exception ex)
                 {
                     await ctx.Member.SendMessageAsync(new DiscordEmbedBuilder()
