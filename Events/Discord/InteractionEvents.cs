@@ -46,7 +46,7 @@ namespace DisCatSharp.Support.Events.Discord
                 else
                 {
                     await member.GrantRoleAsync(role, "Rules accepted");
-                    await e.Interaction.CreateFollowupMessageAsync(new() { Content = "Welcome to DisCatSharp!\n\nTake a look into <#891500835543056384> and <#917583400162967552> :3", IsEphemeral = true });
+                    await e.Interaction.CreateFollowupMessageAsync(new() { Content = "Welcome to DisCatSharp!\n\nTake a look into <#891500835543056384> and say hi in <#859253281741078539> :3", IsEphemeral = true });
                 }
             }
             #endregion
