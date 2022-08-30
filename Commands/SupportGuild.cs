@@ -1,5 +1,6 @@
 ﻿using DisCatSharp.ApplicationCommands;
 using DisCatSharp.ApplicationCommands.Attributes;
+using DisCatSharp.ApplicationCommands.Context;
 using DisCatSharp.Entities;
 using DisCatSharp.Phabricator;
 using DisCatSharp.Phabricator.Applications.Maniphest;

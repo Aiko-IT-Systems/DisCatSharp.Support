@@ -1,5 +1,6 @@
 ﻿using DisCatSharp.ApplicationCommands;
 using DisCatSharp.ApplicationCommands.Attributes;
+using DisCatSharp.ApplicationCommands.Context;
 using DisCatSharp.Entities;
 using DisCatSharp.Enums;
 using DisCatSharp.Interactivity.Extensions;
@@ -220,9 +221,9 @@ namespace DisCatSharp.Support.Commands.Tasks
 					var modalData = interaction.Result.Interaction.Data;
 					await modalResult.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("Generating..").AsEphemeral());
 
-					var type = modalData.Components.First(x => x.Components.First().CustomId == "type").Components.First().Values.First();
+					var type = modalData.Components.First(x => x.Components.First().CustomId == "type").Components.First().Values[0];
 					var title = modalData.Components.First(x => x.Components.First().CustomId == "title").Components.First().Value;
-					var priority = modalData.Components.First(x => x.Components.First().CustomId == "priority").Components.First().Values.First();
+					var priority = modalData.Components.First(x => x.Components.First().CustomId == "priority").Components.First().Values[0];
 					var description = modalData.Components.First(x => x.Components.First().CustomId == "description").Components.First().Value;
 
 
