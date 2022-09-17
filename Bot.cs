@@ -158,12 +158,9 @@ namespace DisCatSharp.Support
                 AutoReconnect = true,
                 MessageCacheSize = 2048,
                 MinimumLogLevel = LogLevel,
-                ShardCount = 1,
-                ShardId = 0,
                 Intents = DiscordIntents.AllUnprivileged | DiscordIntents.GuildMembers | DiscordIntents.MessageContent,
-                MobileStatus = false,
                 UseCanary = true,
-                AutoRefreshChannelCache = false,
+                ReconnectIndefinitely = true,
                 LoggerFactory = new LoggerFactory().AddSerilog(Log.Logger)
             };
 
@@ -200,7 +197,16 @@ namespace DisCatSharp.Support
                 ResponseBehavior = InteractionResponseBehavior.Respond
             };
 
-            ApplicationCommandsConfiguration = new();
+            ApplicationCommandsConfiguration = new()
+            {
+                AutoDefer = false,
+                CheckAllGuilds = false,
+                DebugStartup = false,
+                EnableLocalization = false,
+                EnableDefaultHelp = false,
+                ManualOverride = false,
+                GenerateTranslationFilesOnly = false
+            };
         }
 
         /// <summary>
@@ -313,7 +319,7 @@ namespace DisCatSharp.Support
             */
             DiscordClient.MessageCreated -= MessageEvents.Client_MessageCreated;
             DiscordClient.ComponentInteractionCreated -= InteractionEvents.InteractionCreated;
-            /*
+			/*
             DiscordClient.MessageReactionAdded -= Client_MessageReactionAdded;
 
             DiscordClient.GuildMemberAdded -= Client_GuildMemberAdded;
@@ -337,7 +343,8 @@ namespace DisCatSharp.Support
             DiscordClient.ApplicationCommandPermissionsUpdated -= Client_ApplicationCommandPermissionsUpdated;
 
             CommandsNextExtension.CommandErrored -= CommandNext_CommandErrored;*/
-        }
+			ApplicationCommandsExtension.ApplicationCommandsModuleStartupFinished -= ApplicationCommandsExtension_ApplicationCommandsModuleStartupFinished;
+		}
 
         /// <summary>
         /// Registers the commands.

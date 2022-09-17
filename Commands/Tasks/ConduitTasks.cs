@@ -221,10 +221,10 @@ namespace DisCatSharp.Support.Commands.Tasks
 					var modalData = interaction.Result.Interaction.Data;
 					await modalResult.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent("Generating..").AsEphemeral());
 
-					var type = modalData.Components.First(x => x.Components.First().CustomId == "type").Components.First().Values[0];
-					var title = modalData.Components.First(x => x.Components.First().CustomId == "title").Components.First().Value;
-					var priority = modalData.Components.First(x => x.Components.First().CustomId == "priority").Components.First().Values[0];
-					var description = modalData.Components.First(x => x.Components.First().CustomId == "description").Components.First().Value;
+					var type = modalData.Components.First(x => x.CustomId == "type").Values[0];
+					var title = modalData.Components.First(x => x.CustomId == "title").Value;
+					var priority = modalData.Components.First(x => x.CustomId == "priority").Values[0];
+					var description = modalData.Components.First(x => x.CustomId == "description").Value;
 
 
 					Maniphest m = new(Bot.ConduitClient);
