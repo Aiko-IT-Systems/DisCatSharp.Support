@@ -120,16 +120,16 @@ namespace DisCatSharp.Support
         public async Task RunAsync()
         {
             await DiscordClient.ConnectAsync();
-            Console.OutputEncoding = new UTF8Encoding();
-            Console.BackgroundColor = ConsoleColor.DarkBlue;
-            Console.WriteLine($"{"".PadRight(Console.WindowWidth - 2, '█')}");
-            Console.ResetColor();
-            Center("");
-            Center($"Logged in as {DiscordClient.CurrentUser.UsernameWithDiscriminator} with prefix {Config.DiscordConfig.Prefix}");
-            Center("");
-            Console.BackgroundColor = ConsoleColor.DarkBlue;
-            Console.WriteLine($"{"".PadRight(Console.WindowWidth - 2, '█')}");
-            Console.ResetColor();
+//            Console.OutputEncoding = new UTF8Encoding();
+//            Console.BackgroundColor = ConsoleColor.DarkBlue;
+//            Console.WriteLine($"{"".PadRight(Console.WindowWidth - 2, '█')}");
+//            Console.ResetColor();
+//            Center("");
+            Console.WriteLine($"Logged in as {DiscordClient.CurrentUser.UsernameWithDiscriminator} with prefix {Config.DiscordConfig.Prefix}");
+//            Center("");
+//            Console.BackgroundColor = ConsoleColor.DarkBlue;
+//            Console.WriteLine($"{"".PadRight(Console.WindowWidth - 2, '█')}");
+//            Console.ResetColor();
             while (!ShutdownRequest.IsCancellationRequested)
             {
                 await Task.Delay(2000);
