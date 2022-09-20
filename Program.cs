@@ -15,28 +15,28 @@ namespace DisCatSharp.Support
         /// </summary>
         public static void Main()
         {
-            Console.BackgroundColor = ConsoleColor.DarkBlue;
-            Console.WriteLine($"{"".PadRight(Console.WindowWidth - 2, '█')}");
-            Console.ResetColor();
-            Center("");
-            Center($"Initializing {Assembly.GetExecutingAssembly().FullName.Split(",")[0]}");
-            Center("");
-            Console.BackgroundColor = ConsoleColor.DarkBlue;
-            Console.WriteLine($"{"".PadRight(Console.WindowWidth - 2, '█')}");
-            Console.ResetColor();
+//            Console.BackgroundColor = ConsoleColor.DarkBlue;
+//            Console.WriteLine($"{"".PadRight(Console.WindowWidth - 2, '█')}");
+//            Console.ResetColor();
+//            Center("");
+            Console.WriteLine($"Initializing {Assembly.GetExecutingAssembly().FullName.Split(",")[0]}");
+//            Center("");
+//            Console.BackgroundColor = ConsoleColor.DarkBlue;
+//            Console.WriteLine($"{"".PadRight(Console.WindowWidth - 2, '█')}");
+//            Console.ResetColor();
 
             var bot = new Bot(LogLevel.Debug);
             bot.RunAsync().Wait();
 
-            Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.WriteLine($"{"".PadRight(Console.WindowWidth - 2, '█')}");
-            Center("");
-            Center($"Shutdown of {Assembly.GetExecutingAssembly().FullName.Split(",")[0]} successfull");
-            Center("");
-            Center($"Press any key to exit the aplication..");
-            Center("");
-            Console.WriteLine($"{"".PadRight(Console.WindowWidth - 2, '█')}");
-            Console.ResetColor();
+//            Console.ForegroundColor = ConsoleColor.DarkRed;
+//            Console.WriteLine($"{"".PadRight(Console.WindowWidth - 2, '█')}");
+//            Center("");
+            Console.WriteLine($"Shutdown of {Assembly.GetExecutingAssembly().FullName.Split(",")[0]} successfull");
+//            Center("");
+            Console.WriteLine($"Press any key to exit the aplication..");
+//            Center("");
+//            Console.WriteLine($"{"".PadRight(Console.WindowWidth - 2, '█')}");
+//            Console.ResetColor();
             Console.ReadKey(true);
             Environment.Exit(0);
         }

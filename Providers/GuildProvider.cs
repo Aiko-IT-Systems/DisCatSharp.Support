@@ -1,4 +1,4 @@
-﻿using DisCatSharp.ApplicationCommands;
+using DisCatSharp.ApplicationCommands;
 using DisCatSharp.ApplicationCommands.Attributes;
 using DisCatSharp.ApplicationCommands.Context;
 using DisCatSharp.Entities;
