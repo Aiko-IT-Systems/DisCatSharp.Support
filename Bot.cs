@@ -2,6 +2,7 @@
 using DisCatSharp.CommandsNext;
 using DisCatSharp.Entities;
 using DisCatSharp.Enums;
+using DisCatSharp.EventArgs;
 using DisCatSharp.Interactivity;
 using DisCatSharp.Interactivity.Enums;
 using DisCatSharp.Interactivity.EventHandling;
@@ -227,13 +228,12 @@ namespace DisCatSharp.Support
         /// Registers the events.
         /// </summary>
         private static void RegisterEvents()
-        {/*
+		{/*
             DiscordClient.Ready += Client_Ready;
             DiscordClient.Resumed += Client_Resumed;
             DiscordClient.ClientErrored += Client_Errored;
             DiscordClient.Heartbeated += Client_Heartbeated;
 
-            DiscordClient.Zombied += Client_Zombied;
             DiscordClient.UnknownEvent += Client_UnknownEvent;
 
             DiscordClient.SocketOpened += Client_SocketOpened;
@@ -247,7 +247,8 @@ namespace DisCatSharp.Support
             DiscordClient.GuildUpdated += Client_GuildUpdated;
             DiscordClient.GuildDeleted += Client_GuildDeleted;
             */
-            DiscordClient.MessageCreated += async (sender, args) => await Task.Run(async () => await MessageEvents.Client_MessageCreated(sender, args));
+			DiscordClient.Zombied += Client_Zombied;
+			DiscordClient.MessageCreated += async (sender, args) => await Task.Run(async () => await MessageEvents.Client_MessageCreated(sender, args));
             DiscordClient.ComponentInteractionCreated += async (sender, args) => await Task.Run(async () => await InteractionEvents.InteractionCreated(sender, args));
             /*
             DiscordClient.MessageReactionAdded += Client_MessageReactionAdded;
@@ -276,6 +277,12 @@ namespace DisCatSharp.Support
             ApplicationCommandsExtension.ApplicationCommandsModuleStartupFinished += ApplicationCommandsExtension_ApplicationCommandsModuleStartupFinished;
         }
 
+        private static Task Client_Zombied(DiscordClient sender, ZombiedEventArgs e)
+        {
+            ShutdownRequest.Cancel();
+            return Task.FromResult(true);
+        }
+
         private static Task ApplicationCommandsExtension_ApplicationCommandsModuleStartupFinished(ApplicationCommandsExtension sender, ApplicationCommands.EventArgs.ApplicationCommandsModuleStartupFinishedEventArgs e)
         {
             sender.Client.Logger.LogInformation($"Application commands module has finished the startup.");
@@ -297,13 +304,12 @@ namespace DisCatSharp.Support
         /// Deregisters the events.
         /// </summary>
         private static void DeregisterEvents()
-        {/*
+		{/*
             DiscordClient.Ready -= Client_Ready;
             DiscordClient.Resumed -= Client_Resumed;
             DiscordClient.ClientErrored -= Client_Errored;
             DiscordClient.Heartbeated -= Client_Heartbeated;
 
-            DiscordClient.Zombied -= Client_Zombied;
             DiscordClient.UnknownEvent -= Client_UnknownEvent;
 
             DiscordClient.SocketOpened -= Client_SocketOpened;
@@ -317,7 +323,8 @@ namespace DisCatSharp.Support
             DiscordClient.GuildUpdated -= Client_GuildUpdated;
             DiscordClient.GuildDeleted -= Client_GuildDeleted;
             */
-            DiscordClient.MessageCreated -= MessageEvents.Client_MessageCreated;
+			DiscordClient.Zombied -= Client_Zombied;
+			DiscordClient.MessageCreated -= MessageEvents.Client_MessageCreated;
             DiscordClient.ComponentInteractionCreated -= InteractionEvents.InteractionCreated;
 			/*
             DiscordClient.MessageReactionAdded -= Client_MessageReactionAdded;
