@@ -26,9 +26,9 @@ namespace DisCatSharp.Support.Events.Discord
         /// </summary>
         /// <param name="sender">The discord client aka sender.</param>
         /// <param name="e">The event args.</param>
-        public static async Task Client_MessageCreated(DiscordClient sender, MessageCreateEventArgs e)
+        public static Task Client_MessageCreated(DiscordClient sender, MessageCreateEventArgs e)
         {
-            await Task.Run(async() =>
+            _ = Task.Run(async() =>
             {
                 if (e.Guild != null)
                 {
@@ -48,6 +48,7 @@ namespace DisCatSharp.Support.Events.Discord
                     }
                 }
             });
+            return Task.FromResult(true);
         }
 
         /// <summary>
