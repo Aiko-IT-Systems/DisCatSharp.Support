@@ -1,4 +1,5 @@
 ﻿using DisCatSharp.Entities;
+using DisCatSharp.Enums;
 using DisCatSharp.EventArgs;
 using DisCatSharp.Exceptions;
 
@@ -23,35 +24,58 @@ namespace DisCatSharp.Support.Events.Discord
             {
                 await e.Interaction.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource, new() { IsEphemeral = true });
                 DiscordMember member = await e.Guild.GetMemberAsync(e.User.Id);
-                DiscordRole role = e.Guild.GetRole(917585444697440286);
-                if (member.Roles.Contains(role))
+                DiscordRole role1 = e.Guild.GetRole(917585444697440286);
+				DiscordRole role2 = e.Guild.GetRole(858099411900956682);
+				if (member.Roles.Contains(role1) && member.Roles.Contains(role2))
+					await e.Interaction.CreateFollowupMessageAsync(new() { Content = "You already accepted the rules.", IsEphemeral = true });
+				else
                 {
-                    await e.Interaction.CreateFollowupMessageAsync(new() { Content = "You already accepted the rules.", IsEphemeral = true });
-                }
-                else
-                {
-                    await member.GrantRoleAsync(role, "Rules accepted");
-                    await e.Interaction.CreateFollowupMessageAsync(new() { Content = "Rules accepted.", IsEphemeral = true });
+                    try
+                    {
+						await member.GrantRoleAsync(role1, "Rules accepted");
+					}
+                    catch (Exception) { }
+                    try
+					{
+						await member.GrantRoleAsync(role2, "Rules accepted");
+					}
+                    catch (Exception) { }
+					await e.Interaction.CreateFollowupMessageAsync(new() { Content = "Welcome to DisCatSharp!\n\nTake a look into <#891500835543056384> and say hi in <#859253281741078539> :3.", IsEphemeral = true });
                 }
             }
-            else if (e.Id == "member-ready")
+            else if (e.Id == "join_hacktober")
             {
                 await e.Interaction.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource, new() { IsEphemeral = true });
                 DiscordMember member = await e.Guild.GetMemberAsync(e.User.Id);
-                DiscordRole role = e.Guild.GetRole(858099411900956682);
+                DiscordRole role = e.Guild.GetRole(1024042883264827546);
                 if (member.Roles.Contains(role))
                 {
-                    await e.Interaction.CreateFollowupMessageAsync(new() { Content = "You are already a member.", IsEphemeral = true });
+                    await e.Interaction.CreateFollowupMessageAsync(new() { Content = "You already take part :3", IsEphemeral = true });
                 }
                 else
                 {
-                    await member.GrantRoleAsync(role, "Rules accepted");
-                    await e.Interaction.CreateFollowupMessageAsync(new() { Content = "Welcome to DisCatSharp!\n\nTake a look into <#891500835543056384> and say hi in <#859253281741078539> :3", IsEphemeral = true });
+                    await member.GrantRoleAsync(role, "Joined Hacktoberfest");
+                    await e.Interaction.CreateFollowupMessageAsync(new() { Content = "We're happy to have you on board!", IsEphemeral = true });
                 }
-            }
-            #endregion
-            #region Pings
-            else if (e.Id == "selfrole-announcements")
+			}
+			else if (e.Id == "leave_hacktober")
+			{
+				await e.Interaction.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource, new() { IsEphemeral = true });
+				DiscordMember member = await e.Guild.GetMemberAsync(e.User.Id);
+				DiscordRole role = e.Guild.GetRole(1024042883264827546);
+				if (member.Roles.Contains(role))
+				{
+					await e.Interaction.CreateFollowupMessageAsync(new() { Content = "You don't take part :(.", IsEphemeral = true });
+				}
+				else
+				{
+					await member.RevokeRoleAsync(role, "Left Hacktoberfest");
+					await e.Interaction.CreateFollowupMessageAsync(new() { Content = "We hope you'll stay anyways <3", IsEphemeral = true });
+				}
+			}
+			#endregion
+			#region Pings
+			else if (e.Id == "selfrole-announcements")
             {
                 await e.Interaction.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource, new() { IsEphemeral = true });
                 DiscordMember member = await e.Guild.GetMemberAsync(e.User.Id);

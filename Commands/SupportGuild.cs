@@ -2,6 +2,7 @@
 using DisCatSharp.ApplicationCommands.Attributes;
 using DisCatSharp.ApplicationCommands.Context;
 using DisCatSharp.Entities;
+using DisCatSharp.Enums;
 using DisCatSharp.Phabricator;
 using DisCatSharp.Phabricator.Applications.Maniphest;
 using DisCatSharp.Support.Entities.Phabricator;

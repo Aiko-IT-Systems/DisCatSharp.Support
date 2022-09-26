@@ -1,4 +1,5 @@
 ﻿using DisCatSharp.Entities;
+using DisCatSharp.Enums;
 using DisCatSharp.Phabricator.Applications.Maniphest;
 
 namespace DisCatSharp.Support.Entities.Phabricator
