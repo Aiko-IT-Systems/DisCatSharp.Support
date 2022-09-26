@@ -63,7 +63,7 @@ namespace DisCatSharp.Support.Events.Discord
 				await e.Interaction.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource, new() { IsEphemeral = true });
 				DiscordMember member = await e.Guild.GetMemberAsync(e.User.Id);
 				DiscordRole role = e.Guild.GetRole(1024042883264827546);
-				if (member.Roles.Contains(role))
+				if (!member.Roles.Contains(role))
 				{
 					await e.Interaction.CreateFollowupMessageAsync(new() { Content = "You don't take part :(.", IsEphemeral = true });
 				}
