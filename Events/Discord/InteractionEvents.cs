@@ -155,6 +155,15 @@ namespace DisCatSharp.Support.Events.Discord
                     await e.Interaction.CreateFollowupMessageAsync(new() { Content = "Success: Ping role assigned.", IsEphemeral = true });
                 }
             }
+            else if (e.Id == "verified")
+			{
+				await e.Interaction.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource, new() { IsEphemeral = true });
+				DiscordMember member = await e.Guild.GetMemberAsync(e.User.Id);
+				DiscordRole role = e.Guild.GetRole(1040100522469883934);
+				await member.GrantRoleAsync(role);
+				await e.Interaction.CreateFollowupMessageAsync(new() { Content = "Success: You're now verified for free #FuckMusk.", IsEphemeral = true });
+
+			}
             #endregion
             #region Projects
             else if (e.Id == $"selfrole-dcs")
