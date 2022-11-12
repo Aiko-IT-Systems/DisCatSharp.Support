@@ -250,10 +250,20 @@ namespace DisCatSharp.Support
 			DiscordClient.Zombied += Client_Zombied;
 			DiscordClient.MessageCreated += async (sender, args) => await Task.Run(async () => await MessageEvents.Client_MessageCreated(sender, args));
             DiscordClient.ComponentInteractionCreated += async (sender, args) => await Task.Run(async () => await InteractionEvents.InteractionCreated(sender, args));
-            /*
+			DiscordClient.GuildMemberAdded += async (sender, args) => await Task.Run(async () => 
+            {
+				if (args.Guild.Id != 858089281214087179)
+					return;
+				if (args.Member.IsStaff)
+				{
+					var role = args.Guild.GetRole(909881953933754379);
+					await args.Member.GrantRoleAsync(role);
+				}
+			});
+			/*
             DiscordClient.MessageReactionAdded += Client_MessageReactionAdded;
 
-            DiscordClient.GuildMemberAdded += Client_GuildMemberAdded;
+            
             DiscordClient.GuildMemberRemoved += Client_GuildMemberRemoved;
 
             DiscordClient.GuildRoleCreated += Client_GuildRoleCreated;
@@ -274,7 +284,7 @@ namespace DisCatSharp.Support
 
             CommandsNextExtension.CommandErrored += CommandNext_CommandErrored;*/
 
-            ApplicationCommandsExtension.ApplicationCommandsModuleStartupFinished += ApplicationCommandsExtension_ApplicationCommandsModuleStartupFinished;
+			ApplicationCommandsExtension.ApplicationCommandsModuleStartupFinished += ApplicationCommandsExtension_ApplicationCommandsModuleStartupFinished;
         }
 
         private static Task Client_Zombied(DiscordClient sender, ZombiedEventArgs e)
