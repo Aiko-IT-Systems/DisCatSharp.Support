@@ -45,16 +45,16 @@ namespace DisCatSharp.Support.Providers
         /// <summary>
         /// Provides the priority choices for selects.
         /// </summary>
-        public static IEnumerable<DiscordSelectComponentOption> GetSelectOptions()
+        public static IEnumerable<DiscordStringSelectComponentOption> GetSelectOptions()
         {
-            return new DiscordSelectComponentOption[]
+            return new DiscordStringSelectComponentOption[]
             {
-                    new DiscordSelectComponentOption("Unbreak now!", "unbreak", "P0", false),
-                    new DiscordSelectComponentOption("Needs Triage", "triage", "P1", false),
-                    new DiscordSelectComponentOption("High", "high", "P2", false),
-                    new DiscordSelectComponentOption("Normal", "normal", "P3", false),
-                    new DiscordSelectComponentOption("Low", "low", "P3", false),
-                    new DiscordSelectComponentOption("Wishlist", "wish", "P4", false)
+                    new DiscordStringSelectComponentOption("Unbreak now!", "unbreak", "P0", false),
+                    new DiscordStringSelectComponentOption("Needs Triage", "triage", "P1", false),
+                    new DiscordStringSelectComponentOption("High", "high", "P2", false),
+                    new DiscordStringSelectComponentOption("Normal", "normal", "P3", false),
+                    new DiscordStringSelectComponentOption("Low", "low", "P3", false),
+                    new DiscordStringSelectComponentOption("Wishlist", "wish", "P4", false)
             };
         }
     }
@@ -89,14 +89,14 @@ namespace DisCatSharp.Support.Providers
         /// <summary>
         /// Provides the priority choices for selects.
         /// </summary>
-        public static IEnumerable<DiscordSelectComponentOption> GetSelectOptions()
+        public static IEnumerable<DiscordStringSelectComponentOption> GetSelectOptions()
         {
-            return new DiscordSelectComponentOption[]
+            return new DiscordStringSelectComponentOption[]
             {
-                    new DiscordSelectComponentOption("Bug", "[Bug]", null, false),
-                    new DiscordSelectComponentOption("Feature", "[Feature]", null, false),
-                    new DiscordSelectComponentOption("Docs", "[Docs]", null, false),
-                    new DiscordSelectComponentOption("Research", "[Research]", null, false)
+                    new DiscordStringSelectComponentOption("Bug", "[Bug]", null, false),
+                    new DiscordStringSelectComponentOption("Feature", "[Feature]", null, false),
+                    new DiscordStringSelectComponentOption("Docs", "[Docs]", null, false),
+                    new DiscordStringSelectComponentOption("Research", "[Research]", null, false)
             };
         }
     }

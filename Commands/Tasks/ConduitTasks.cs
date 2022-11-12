@@ -206,8 +206,8 @@ namespace DisCatSharp.Support.Commands.Tasks
             builder.WithTitle("Task Information");
             builder.AddTextComponent(new DiscordTextComponent(TextComponentStyle.Small, "title", "Title"));
 			builder.AddTextComponent(new DiscordTextComponent(TextComponentStyle.Paragraph, "description", "Description", defaultValue: ctx.TargetMessage.Content));
-            builder.AddSelectComponent(new DiscordSelectComponent("Type", "Is it a bug?", ConduitTaskTypeSelectProvider.GetSelectOptions(), "type", 1, 1));
-			builder.AddSelectComponent(new DiscordSelectComponent("Priority", "Panic!", ConduitTaskPrioritySelectProvider.GetSelectOptions(), "priority", 1, 1));
+            builder.AddSelectComponent(new DiscordStringSelectComponent("Type", "Is it a bug?", ConduitTaskTypeSelectProvider.GetSelectOptions(), "type", 1, 1));
+			builder.AddSelectComponent(new DiscordStringSelectComponent("Priority", "Panic!", ConduitTaskPrioritySelectProvider.GetSelectOptions(), "priority", 1, 1));
 
 			await ctx.CreateModalResponseAsync(builder);
 

@@ -167,7 +167,7 @@ namespace DisCatSharp.Support
 
             CommandsNextConfiguration = new()
             {
-                StringPrefixes = new string[] { Config.DiscordConfig.Prefix },
+                StringPrefixes = new string[] { Config.DiscordConfig.Prefix }.ToList(),
                 CaseSensitive = true,
                 EnableMentionPrefix = true,
                 IgnoreExtraArguments = true,
