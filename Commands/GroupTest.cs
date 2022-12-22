@@ -1,12 +1,4 @@
-﻿using DisCatSharp.ApplicationCommands;
-using DisCatSharp.ApplicationCommands.Attributes;
-using DisCatSharp.ApplicationCommands.Context;
-using DisCatSharp.Entities;
-using DisCatSharp.Support.Providers;
-
-using System.Threading.Tasks;
-
-namespace DisCatSharp.Support.Commands
+﻿namespace DisCatSharp.Support.Commands
 {/*
     [SlashCommandGroup("group", "Level 1", false)]
     public class GroupTest : ApplicationCommandsModule

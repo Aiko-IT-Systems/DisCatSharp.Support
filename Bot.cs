@@ -23,213 +23,212 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace DisCatSharp.Support
 {
-    /// <summary>
-    /// The bot.
-    /// </summary>
-    internal class Bot : IDisposable
-    {
-        /// <summary>
-        /// Gets the shutdown request.
-        /// </summary>
-        public static CancellationTokenSource ShutdownRequest { get; internal set; }
+	/// <summary>
+	/// The bot.
+	/// </summary>
+	internal class Bot : IDisposable
+	{
+		/// <summary>
+		/// Gets the shutdown request.
+		/// </summary>
+		public static CancellationTokenSource ShutdownRequest { get; internal set; }
 
-        /// <summary>
-        /// Gets the config.
-        /// </summary>
-        public static Config Config { get; internal set; }
+		/// <summary>
+		/// Gets the config.
+		/// </summary>
+		public static Config Config { get; internal set; }
 
-        /// <summary>
-        /// Gets the log level.
-        /// </summary>
-        public static LogLevel LogLevel { get; internal set; }
+		/// <summary>
+		/// Gets the log level.
+		/// </summary>
+		public static LogLevel LogLevel { get; internal set; }
 
-        /// <summary>
-        /// Gets the connection string.
-        /// </summary>
-        public static string ConnectionString 
-            => @$"server={Config.DatabaseConfig.Hostname};userid={Config.DatabaseConfig.User};password={Config.DatabaseConfig.Password};database={Config.DatabaseConfig.Db};SslMode=none";
+		/// <summary>
+		/// Gets the connection string.
+		/// </summary>
+		public static string ConnectionString
+			=> @$"server={Config.DatabaseConfig.Hostname};userid={Config.DatabaseConfig.User};password={Config.DatabaseConfig.Password};database={Config.DatabaseConfig.Db};SslMode=none";
 
-        /// <summary>
-        /// Gets the discord client.
-        /// </summary>
-        public static DiscordClient DiscordClient { get; internal set; }
+		/// <summary>
+		/// Gets the discord client.
+		/// </summary>
+		public static DiscordClient DiscordClient { get; internal set; }
 
-        /// <summary>
-        /// Gets the conduit client.
-        /// </summary>
-        public static ConduitClient ConduitClient { get; internal set; }
-
-
-        /// <summary>
-        /// Gets the application commands extension.
-        /// </summary>
-        public static ApplicationCommandsExtension ApplicationCommandsExtension { get; internal set; }
-
-        /// <summary>
-        /// Gets the commands next extension.
-        /// </summary>
-        public static CommandsNextExtension CommandsNextExtension { get; internal set; }
-
-        /// <summary>
-        /// Gets the interactivity extension.
-        /// </summary>
-        public static InteractivityExtension InteractivityExtension { get; internal set; }
+		/// <summary>
+		/// Gets the conduit client.
+		/// </summary>
+		public static ConduitClient ConduitClient { get; internal set; }
 
 
-        /// <summary>
-        /// Gets the discord configuration.
-        /// </summary>
-        public static DiscordConfiguration DiscordConfiguration { get; internal set; }
+		/// <summary>
+		/// Gets the application commands extension.
+		/// </summary>
+		public static ApplicationCommandsExtension ApplicationCommandsExtension { get; internal set; }
 
-        /// <summary>
-        /// Gets the application commands configuration.
-        /// </summary>
-        public static ApplicationCommandsConfiguration ApplicationCommandsConfiguration { get; internal set; }
+		/// <summary>
+		/// Gets the commands next extension.
+		/// </summary>
+		public static CommandsNextExtension CommandsNextExtension { get; internal set; }
 
-        /// <summary>
-        /// Gets the commands next configuration.
-        /// </summary>
-        public static CommandsNextConfiguration CommandsNextConfiguration { get; internal set; }
-
-        /// <summary>
-        /// Gets the interactivity configuration.
-        /// </summary>
-        public static InteractivityConfiguration InteractivityConfiguration { get; internal set; }
+		/// <summary>
+		/// Gets the interactivity extension.
+		/// </summary>
+		public static InteractivityExtension InteractivityExtension { get; internal set; }
 
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Bot"/> class.
-        /// </summary>
-        public Bot(LogLevel logLevel)
-        {
-            Config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(@"config.json"));
-            LogLevel = logLevel;
-            SetupConfigs();
-            SetupClients();
-            RegisterEvents();
-            RegisterCommands();
+		/// <summary>
+		/// Gets the discord configuration.
+		/// </summary>
+		public static DiscordConfiguration DiscordConfiguration { get; internal set; }
 
-        }
+		/// <summary>
+		/// Gets the application commands configuration.
+		/// </summary>
+		public static ApplicationCommandsConfiguration ApplicationCommandsConfiguration { get; internal set; }
 
-        /// <summary>
-        /// Starts the bot.
-        /// </summary>
-        public async Task RunAsync()
-        {
-            await DiscordClient.ConnectAsync();
-//            Console.OutputEncoding = new UTF8Encoding();
-//            Console.BackgroundColor = ConsoleColor.DarkBlue;
-//            Console.WriteLine($"{"".PadRight(Console.WindowWidth - 2, '█')}");
-//            Console.ResetColor();
-//            Center("");
-            Console.WriteLine($"Logged in as {DiscordClient.CurrentUser.UsernameWithDiscriminator} with prefix {Config.DiscordConfig.Prefix}");
-//            Center("");
-//            Console.BackgroundColor = ConsoleColor.DarkBlue;
-//            Console.WriteLine($"{"".PadRight(Console.WindowWidth - 2, '█')}");
-//            Console.ResetColor();
-            while (!ShutdownRequest.IsCancellationRequested)
-            {
-                await Task.Delay(2000);
-            }
-            await DiscordClient.UpdateStatusAsync(activity: null, userStatus: UserStatus.Offline, idleSince: null);
-            await DiscordClient.DisconnectAsync();
-            DeregisterEvents();
-            Dispose();
-        }
+		/// <summary>
+		/// Gets the commands next configuration.
+		/// </summary>
+		public static CommandsNextConfiguration CommandsNextConfiguration { get; internal set; }
 
-        /// <summary>
-        /// Setups the configs.
-        /// </summary>
-        private void SetupConfigs()
-        {
-            ShutdownRequest = new();
-            Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
-                .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
-                .CreateLogger();
-            
-            DiscordConfiguration = new()
-            {
-                Token = Config.DiscordConfig.BotToken,
-                TokenType = TokenType.Bot,
-                AutoReconnect = true,
-                MessageCacheSize = 2048,
-                MinimumLogLevel = LogLevel,
-                Intents = DiscordIntents.AllUnprivileged | DiscordIntents.GuildMembers | DiscordIntents.MessageContent,
-                UseCanary = true,
-                ReconnectIndefinitely = true,
-                LoggerFactory = new LoggerFactory().AddSerilog(Log.Logger)
-            };
+		/// <summary>
+		/// Gets the interactivity configuration.
+		/// </summary>
+		public static InteractivityConfiguration InteractivityConfiguration { get; internal set; }
 
-            CommandsNextConfiguration = new()
-            {
-                StringPrefixes = new string[] { Config.DiscordConfig.Prefix }.ToList(),
-                CaseSensitive = true,
-                EnableMentionPrefix = true,
-                IgnoreExtraArguments = true,
-                DefaultHelpChecks = null,
-                EnableDefaultHelp = true,
-                EnableDms = true,
-                DmHelp = true,
-                UseDefaultCommandHandler = true
-            };
 
-            InteractivityConfiguration = new()
-            {
-                Timeout = TimeSpan.FromMinutes(2),
-                PaginationBehaviour = PaginationBehaviour.WrapAround,
-                PaginationDeletion = PaginationDeletion.DeleteEmojis,
-                PollBehaviour = PollBehaviour.DeleteEmojis,
-                AckPaginationButtons = true,
-                ButtonBehavior = ButtonPaginationBehavior.Disable,
-                PaginationButtons = new PaginationButtons()
-                {
-                    SkipLeft = new DiscordButtonComponent(ButtonStyle.Primary, "pgb-skip-left", "First", false, new DiscordComponentEmoji("⏮️")),
-                    Left = new DiscordButtonComponent(ButtonStyle.Primary, "pgb-left", "Previous", false, new DiscordComponentEmoji("◀️")),
-                    Stop = new DiscordButtonComponent(ButtonStyle.Danger, "pgb-stop", "Stop", false, new DiscordComponentEmoji("⏹️")),
-                    Right = new DiscordButtonComponent(ButtonStyle.Primary, "pgb-right", "Next", false, new DiscordComponentEmoji("▶️")),
-                    SkipRight = new DiscordButtonComponent(ButtonStyle.Primary, "pgb-skip-right", "Last", false, new DiscordComponentEmoji("⏭️"))
-                },
-                ResponseMessage = "Something went wrong.",
-                ResponseBehavior = InteractionResponseBehavior.Ignore
-            };
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Bot"/> class.
+		/// </summary>
+		public Bot(LogLevel logLevel)
+		{
+			Config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(@"config.json"));
+			LogLevel = logLevel;
+			SetupConfigs();
+			SetupClients();
+			RegisterEvents();
+			RegisterCommands();
 
-            ApplicationCommandsConfiguration = new()
-            {
-                AutoDefer = false,
-                CheckAllGuilds = false,
-                DebugStartup = false,
-                EnableLocalization = false,
-                EnableDefaultHelp = false,
-                ManualOverride = false,
-                GenerateTranslationFilesOnly = false
-            };
-        }
+		}
 
-        /// <summary>
-        /// Setups the clients.
-        /// </summary>
-        private void SetupClients()
-        {
-            DiscordClient = new(DiscordConfiguration);
-            CommandsNextExtension = DiscordClient.UseCommandsNext(CommandsNextConfiguration);
-            InteractivityExtension = DiscordClient.UseInteractivity(InteractivityConfiguration);
-            DiscordClient.UseApplicationCommands(ApplicationCommandsConfiguration);
-            ApplicationCommandsExtension = DiscordClient.GetApplicationCommands();
+		/// <summary>
+		/// Starts the bot.
+		/// </summary>
+		public async Task RunAsync()
+		{
+			await DiscordClient.ConnectAsync();
+			//            Console.OutputEncoding = new UTF8Encoding();
+			//            Console.BackgroundColor = ConsoleColor.DarkBlue;
+			//            Console.WriteLine($"{"".PadRight(Console.WindowWidth - 2, '█')}");
+			//            Console.ResetColor();
+			//            Center("");
+			Console.WriteLine($"Logged in as {DiscordClient.CurrentUser.UsernameWithDiscriminator} with prefix {Config.DiscordConfig.Prefix}");
+			//            Center("");
+			//            Console.BackgroundColor = ConsoleColor.DarkBlue;
+			//            Console.WriteLine($"{"".PadRight(Console.WindowWidth - 2, '█')}");
+			//            Console.ResetColor();
+			while (!ShutdownRequest.IsCancellationRequested)
+			{
+				await Task.Delay(2000);
+			}
+			await DiscordClient.UpdateStatusAsync(activity: null, userStatus: UserStatus.Offline, idleSince: null);
+			await DiscordClient.DisconnectAsync();
+			DeregisterEvents();
+			Dispose();
+		}
 
-            ConduitClient = new(Config.ConduitConfig.ApiHost, Config.ConduitConfig.ApiToken);
-        }
+		/// <summary>
+		/// Setups the configs.
+		/// </summary>
+		private void SetupConfigs()
+		{
+			ShutdownRequest = new();
+			Log.Logger = new LoggerConfiguration()
+				.MinimumLevel.Debug()
+				.WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
+				.CreateLogger();
 
-        /// <summary>
-        /// Registers the events.
-        /// </summary>
-        private void RegisterEvents()
+			DiscordConfiguration = new()
+			{
+				Token = Config.DiscordConfig.BotToken,
+				TokenType = TokenType.Bot,
+				AutoReconnect = true,
+				MessageCacheSize = 2048,
+				MinimumLogLevel = LogLevel,
+				Intents = DiscordIntents.AllUnprivileged | DiscordIntents.GuildMembers | DiscordIntents.MessageContent,
+				UseCanary = true,
+				ReconnectIndefinitely = true,
+				LoggerFactory = new LoggerFactory().AddSerilog(Log.Logger)
+			};
+
+			CommandsNextConfiguration = new()
+			{
+				StringPrefixes = new string[] { Config.DiscordConfig.Prefix }.ToList(),
+				CaseSensitive = true,
+				EnableMentionPrefix = true,
+				IgnoreExtraArguments = true,
+				DefaultHelpChecks = null,
+				EnableDefaultHelp = true,
+				EnableDms = true,
+				DmHelp = true,
+				UseDefaultCommandHandler = true
+			};
+
+			InteractivityConfiguration = new()
+			{
+				Timeout = TimeSpan.FromMinutes(2),
+				PaginationBehaviour = PaginationBehaviour.WrapAround,
+				PaginationDeletion = PaginationDeletion.DeleteEmojis,
+				PollBehaviour = PollBehaviour.DeleteEmojis,
+				AckPaginationButtons = true,
+				ButtonBehavior = ButtonPaginationBehavior.Disable,
+				PaginationButtons = new PaginationButtons()
+				{
+					SkipLeft = new DiscordButtonComponent(ButtonStyle.Primary, "pgb-skip-left", "First", false, new DiscordComponentEmoji("⏮️")),
+					Left = new DiscordButtonComponent(ButtonStyle.Primary, "pgb-left", "Previous", false, new DiscordComponentEmoji("◀️")),
+					Stop = new DiscordButtonComponent(ButtonStyle.Danger, "pgb-stop", "Stop", false, new DiscordComponentEmoji("⏹️")),
+					Right = new DiscordButtonComponent(ButtonStyle.Primary, "pgb-right", "Next", false, new DiscordComponentEmoji("▶️")),
+					SkipRight = new DiscordButtonComponent(ButtonStyle.Primary, "pgb-skip-right", "Last", false, new DiscordComponentEmoji("⏭️"))
+				},
+				ResponseMessage = "Something went wrong.",
+				ResponseBehavior = InteractionResponseBehavior.Ignore
+			};
+
+			ApplicationCommandsConfiguration = new()
+			{
+				AutoDefer = false,
+				CheckAllGuilds = false,
+				DebugStartup = false,
+				EnableLocalization = false,
+				EnableDefaultHelp = false,
+				ManualOverride = false,
+				GenerateTranslationFilesOnly = false
+			};
+		}
+
+		/// <summary>
+		/// Setups the clients.
+		/// </summary>
+		private void SetupClients()
+		{
+			DiscordClient = new(DiscordConfiguration);
+			CommandsNextExtension = DiscordClient.UseCommandsNext(CommandsNextConfiguration);
+			InteractivityExtension = DiscordClient.UseInteractivity(InteractivityConfiguration);
+			DiscordClient.UseApplicationCommands(ApplicationCommandsConfiguration);
+			ApplicationCommandsExtension = DiscordClient.GetApplicationCommands();
+
+			ConduitClient = new(Config.ConduitConfig.ApiHost, Config.ConduitConfig.ApiToken);
+		}
+
+		/// <summary>
+		/// Registers the events.
+		/// </summary>
+		private void RegisterEvents()
 		{/*
             DiscordClient.Ready += Client_Ready;
             DiscordClient.Resumed += Client_Resumed;
@@ -252,8 +251,8 @@ namespace DisCatSharp.Support
 			DiscordClient.Zombied += Client_Zombied;
 			DiscordClient.MessageCreated += MessageEvents.Client_MessageCreated;
 			DiscordClient.ComponentInteractionCreated += InteractionCreated;
-			DiscordClient.GuildMemberAdded += async (sender, args) => await Task.Run(async () => 
-            {
+			DiscordClient.GuildMemberAdded += async (sender, args) => await Task.Run(async () =>
+			{
 				if (args.Guild.Id != 858089281214087179)
 					return;
 				if (args.Member.IsStaff)
@@ -287,18 +286,18 @@ namespace DisCatSharp.Support
             CommandsNextExtension.CommandErrored += CommandNext_CommandErrored;*/
 
 			ApplicationCommandsExtension.ApplicationCommandsModuleStartupFinished += ApplicationCommandsExtension_ApplicationCommandsModuleStartupFinished;
-        }
+		}
 
-        private Task Client_Zombied(DiscordClient sender, ZombiedEventArgs e)
-        {
-            ShutdownRequest.Cancel();
-            return Task.FromResult(true);
-        }
+		private Task Client_Zombied(DiscordClient sender, ZombiedEventArgs e)
+		{
+			ShutdownRequest.Cancel();
+			return Task.FromResult(true);
+		}
 
-        private Task ApplicationCommandsExtension_ApplicationCommandsModuleStartupFinished(ApplicationCommandsExtension sender, ApplicationCommands.EventArgs.ApplicationCommandsModuleStartupFinishedEventArgs e)
-        {
-            sender.Client.Logger.LogInformation($"Application commands module has finished the startup.");
-            /*var guild_cmd_count = 0;
+		private Task ApplicationCommandsExtension_ApplicationCommandsModuleStartupFinished(ApplicationCommandsExtension sender, ApplicationCommands.EventArgs.ApplicationCommandsModuleStartupFinishedEventArgs e)
+		{
+			sender.Client.Logger.LogInformation($"Application commands module has finished the startup.");
+			/*var guild_cmd_count = 0;
             foreach (var cmd in e.RegisteredGuildCommands)
             {
                 guild_cmd_count += cmd.Value.Select(x => x.Name).Distinct().Count();
@@ -309,13 +308,13 @@ namespace DisCatSharp.Support
                 $" - Registered {guild_cmd_count} commands on {e.RegisteredGuildCommands.Count} guilds."
             );*/
 
-            return Task.CompletedTask;
-        }
+			return Task.CompletedTask;
+		}
 
-        /// <summary>
-        /// Deregisters the events.
-        /// </summary>
-        private void DeregisterEvents()
+		/// <summary>
+		/// Deregisters the events.
+		/// </summary>
+		private void DeregisterEvents()
 		{/*
             DiscordClient.Ready -= Client_Ready;
             DiscordClient.Resumed -= Client_Resumed;
@@ -337,7 +336,7 @@ namespace DisCatSharp.Support
             */
 			DiscordClient.Zombied -= Client_Zombied;
 			DiscordClient.MessageCreated -= MessageEvents.Client_MessageCreated;
-            DiscordClient.ComponentInteractionCreated -= InteractionCreated;
+			DiscordClient.ComponentInteractionCreated -= InteractionCreated;
 			/*
             DiscordClient.MessageReactionAdded -= Client_MessageReactionAdded;
 
@@ -365,12 +364,12 @@ namespace DisCatSharp.Support
 			ApplicationCommandsExtension.ApplicationCommandsModuleStartupFinished -= ApplicationCommandsExtension_ApplicationCommandsModuleStartupFinished;
 		}
 
-        /// <summary>
-        /// Registers the commands.
-        /// </summary>
-        private static void RegisterCommands()
-        {
-            /*Type commandModule = typeof(BaseCommandModule);
+		/// <summary>
+		/// Registers the commands.
+		/// </summary>
+		private static void RegisterCommands()
+		{
+			/*Type commandModule = typeof(BaseCommandModule);
             var commands = Assembly.GetExecutingAssembly().GetTypes().Where(t => commandModule.IsAssignableFrom(t) && !t.IsNested).ToList();
 
             foreach (var command in commands)
@@ -378,51 +377,51 @@ namespace DisCatSharp.Support
                 CommandsNextExtension.RegisterCommands(command);
             }
             */
-            Type applicationCommandModule = typeof(ApplicationCommandsModule);
-            var applicationCommands = Assembly.GetExecutingAssembly().GetTypes().Where(t => applicationCommandModule.IsAssignableFrom(t) && !t.IsNested).ToList();
+			Type applicationCommandModule = typeof(ApplicationCommandsModule);
+			var applicationCommands = Assembly.GetExecutingAssembly().GetTypes().Where(t => applicationCommandModule.IsAssignableFrom(t) && !t.IsNested).ToList();
 
-            foreach (var command in applicationCommands)
-            {
-                ApplicationCommandsExtension.RegisterGuildCommands(command, Config.DiscordConfig.ApplicationCommandConfig.Dcs.GuildId);
+			foreach (var command in applicationCommands)
+			{
+				ApplicationCommandsExtension.RegisterGuildCommands(command, Config.DiscordConfig.ApplicationCommandConfig.Dcs.GuildId);
 
-                ApplicationCommandsExtension.RegisterGuildCommands(command, Config.DiscordConfig.ApplicationCommandConfig.DcsDev.GuildId);
+				ApplicationCommandsExtension.RegisterGuildCommands(command, Config.DiscordConfig.ApplicationCommandConfig.DcsDev.GuildId);
 
-                ApplicationCommandsExtension.RegisterGuildCommands(command, 858089274087309313);
-            }
-        }
+				ApplicationCommandsExtension.RegisterGuildCommands(command, 858089274087309313);
+			}
+		}
 
 
-        /// <summary>
-        /// Disposes the bot.
-        /// </summary>
-        public void Dispose()
-        {
-            DiscordClient.Dispose();
+		/// <summary>
+		/// Disposes the bot.
+		/// </summary>
+		public void Dispose()
+		{
+			DiscordClient.Dispose();
 
-            ApplicationCommandsExtension = null;
-            CommandsNextExtension = null;
-            InteractivityExtension = null;
+			ApplicationCommandsExtension = null;
+			CommandsNextExtension = null;
+			InteractivityExtension = null;
 
-            ApplicationCommandsConfiguration = null;
-            CommandsNextConfiguration = null;
-            InteractivityConfiguration = null;
-            DiscordConfiguration = null;
+			ApplicationCommandsConfiguration = null;
+			CommandsNextConfiguration = null;
+			InteractivityConfiguration = null;
+			DiscordConfiguration = null;
 
-            ConduitClient = null;
-            DiscordClient = null;
-        }
+			ConduitClient = null;
+			DiscordClient = null;
+		}
 
 		public async Task InteractionCreated(DiscordClient sender, ComponentInteractionCreateEventArgs e)
 		{
-            List<string> reserverIds = new()
-            {
+			List<string> reserverIds = new()
+			{
 				"role_select_section",
 				"role_select_topic"
 			};
-            if (reserverIds.Contains(e.Id))
-            {
-                // Ignore
-            }
+			if (reserverIds.Contains(e.Id))
+			{
+				// Ignore
+			}
 			#region Default ack
 			else if (e.Id == "ack")
 			{
@@ -469,15 +468,15 @@ namespace DisCatSharp.Support
 				catch (Exception) { }
 			}
 			#endregion
-            else
-            {
-                try
-                {
-                    await e.Interaction.CreateResponseAsync(InteractionResponseType.DeferredMessageUpdate);
-                }
-                catch (ServerErrorException) { }
-                catch (NotFoundException) { }
-            }
+			else
+			{
+				try
+				{
+					await e.Interaction.CreateResponseAsync(InteractionResponseType.DeferredMessageUpdate);
+				}
+				catch (ServerErrorException) { }
+				catch (NotFoundException) { }
+			}
 		}
 
 		private async Task SectionRolesSelection(DiscordClient sender, ComponentInteractionCreateEventArgs e)
@@ -578,27 +577,27 @@ namespace DisCatSharp.Support
 		/// </summary>
 		/// <param name="s">The text.</param>
 		public static void Center(string s)
-        {
-            try
-            {
-                Console.BackgroundColor = ConsoleColor.DarkBlue;
-                Console.Write("██");
-                Console.SetCursorPosition((Console.WindowWidth - s.Length) / 2, Console.CursorTop);
-                Console.ResetColor();
-                Console.Write(s);
-                Console.BackgroundColor = ConsoleColor.DarkBlue;
-                Console.SetCursorPosition((Console.WindowWidth - 4), Console.CursorTop);
-                Console.WriteLine("██");
-                Console.ResetColor();
-            }
-            catch (Exception)
-            {
-                s = "Console to smoll EXC";
-                Console.SetCursorPosition((Console.WindowWidth - s.Length) / 2, Console.CursorTop);
-                Console.Write(s);
-                Console.SetCursorPosition((Console.WindowWidth - 4), Console.CursorTop);
-                Console.WriteLine("██");
-            }
-        }
-    }
+		{
+			try
+			{
+				Console.BackgroundColor = ConsoleColor.DarkBlue;
+				Console.Write("██");
+				Console.SetCursorPosition((Console.WindowWidth - s.Length) / 2, Console.CursorTop);
+				Console.ResetColor();
+				Console.Write(s);
+				Console.BackgroundColor = ConsoleColor.DarkBlue;
+				Console.SetCursorPosition((Console.WindowWidth - 4), Console.CursorTop);
+				Console.WriteLine("██");
+				Console.ResetColor();
+			}
+			catch (Exception)
+			{
+				s = "Console to smoll EXC";
+				Console.SetCursorPosition((Console.WindowWidth - s.Length) / 2, Console.CursorTop);
+				Console.Write(s);
+				Console.SetCursorPosition((Console.WindowWidth - 4), Console.CursorTop);
+				Console.WriteLine("██");
+			}
+		}
+	}
 }

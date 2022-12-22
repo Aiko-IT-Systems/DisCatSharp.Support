@@ -4,44 +4,44 @@ using System.Collections.Generic;
 
 namespace DisCatSharp.Support.Entities.Phabricator
 {
-    public class PhabricatorTransaction
-    {
-        [JsonProperty("transactions")]
-        public List<TransactionObject> Transactions;
+	public class PhabricatorTransaction
+	{
+		[JsonProperty("transactions")]
+		public List<TransactionObject> Transactions;
 
-        [JsonProperty("objectIdentifier")]
-        public string ObjectIdentifier;
+		[JsonProperty("objectIdentifier")]
+		public string ObjectIdentifier;
 
-        public PhabricatorTransaction(string phid)
-        {
-            Transactions = new();
-            ObjectIdentifier = phid;
-        }
+		public PhabricatorTransaction(string phid)
+		{
+			Transactions = new();
+			ObjectIdentifier = phid;
+		}
 
-        public Dictionary<string, dynamic> SerializeParameters()
-        {
-            Dictionary<string, dynamic> parameters = new()
-            {
-                { "transactions", this.Transactions },
-                { "objectIdentifier", this.ObjectIdentifier }
-            };
+		public Dictionary<string, dynamic> SerializeParameters()
+		{
+			Dictionary<string, dynamic> parameters = new()
+			{
+				{ "transactions", this.Transactions },
+				{ "objectIdentifier", this.ObjectIdentifier }
+			};
 
-            return parameters;
-        }
-    }
+			return parameters;
+		}
+	}
 
-    public class TransactionObject
-    {
-        [JsonProperty("type")]
-        public string Type;
+	public class TransactionObject
+	{
+		[JsonProperty("type")]
+		public string Type;
 
-        [JsonProperty("value")]
-        public object Value;
+		[JsonProperty("value")]
+		public object Value;
 
-        public TransactionObject(string type, object value)
-        {
-            Type = type;
-            Value = value;
-        }
-    }
+		public TransactionObject(string type, object value)
+		{
+			Type = type;
+			Value = value;
+		}
+	}
 }
