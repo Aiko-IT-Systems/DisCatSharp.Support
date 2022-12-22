@@ -3,6 +3,7 @@ using DisCatSharp.CommandsNext;
 using DisCatSharp.Entities;
 using DisCatSharp.Enums;
 using DisCatSharp.EventArgs;
+using DisCatSharp.Exceptions;
 using DisCatSharp.Interactivity;
 using DisCatSharp.Interactivity.Enums;
 using DisCatSharp.Interactivity.EventHandling;
@@ -18,6 +19,7 @@ using Newtonsoft.Json;
 using Serilog;
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -144,7 +146,7 @@ namespace DisCatSharp.Support
         /// <summary>
         /// Setups the configs.
         /// </summary>
-        private static void SetupConfigs()
+        private void SetupConfigs()
         {
             ShutdownRequest = new();
             Log.Logger = new LoggerConfiguration()
@@ -195,7 +197,7 @@ namespace DisCatSharp.Support
                     SkipRight = new DiscordButtonComponent(ButtonStyle.Primary, "pgb-skip-right", "Last", false, new DiscordComponentEmoji("⏭️"))
                 },
                 ResponseMessage = "Something went wrong.",
-                ResponseBehavior = InteractionResponseBehavior.Respond
+                ResponseBehavior = InteractionResponseBehavior.Ignore
             };
 
             ApplicationCommandsConfiguration = new()
@@ -213,7 +215,7 @@ namespace DisCatSharp.Support
         /// <summary>
         /// Setups the clients.
         /// </summary>
-        private static void SetupClients()
+        private void SetupClients()
         {
             DiscordClient = new(DiscordConfiguration);
             CommandsNextExtension = DiscordClient.UseCommandsNext(CommandsNextConfiguration);
@@ -227,7 +229,7 @@ namespace DisCatSharp.Support
         /// <summary>
         /// Registers the events.
         /// </summary>
-        private static void RegisterEvents()
+        private void RegisterEvents()
 		{/*
             DiscordClient.Ready += Client_Ready;
             DiscordClient.Resumed += Client_Resumed;
@@ -248,8 +250,8 @@ namespace DisCatSharp.Support
             DiscordClient.GuildDeleted += Client_GuildDeleted;
             */
 			DiscordClient.Zombied += Client_Zombied;
-			DiscordClient.MessageCreated += async (sender, args) => await Task.Run(async () => await MessageEvents.Client_MessageCreated(sender, args));
-            DiscordClient.ComponentInteractionCreated += async (sender, args) => await Task.Run(async () => await InteractionEvents.InteractionCreated(sender, args));
+			DiscordClient.MessageCreated += MessageEvents.Client_MessageCreated;
+			DiscordClient.ComponentInteractionCreated += InteractionCreated;
 			DiscordClient.GuildMemberAdded += async (sender, args) => await Task.Run(async () => 
             {
 				if (args.Guild.Id != 858089281214087179)
@@ -287,13 +289,13 @@ namespace DisCatSharp.Support
 			ApplicationCommandsExtension.ApplicationCommandsModuleStartupFinished += ApplicationCommandsExtension_ApplicationCommandsModuleStartupFinished;
         }
 
-        private static Task Client_Zombied(DiscordClient sender, ZombiedEventArgs e)
+        private Task Client_Zombied(DiscordClient sender, ZombiedEventArgs e)
         {
             ShutdownRequest.Cancel();
             return Task.FromResult(true);
         }
 
-        private static Task ApplicationCommandsExtension_ApplicationCommandsModuleStartupFinished(ApplicationCommandsExtension sender, ApplicationCommands.EventArgs.ApplicationCommandsModuleStartupFinishedEventArgs e)
+        private Task ApplicationCommandsExtension_ApplicationCommandsModuleStartupFinished(ApplicationCommandsExtension sender, ApplicationCommands.EventArgs.ApplicationCommandsModuleStartupFinishedEventArgs e)
         {
             sender.Client.Logger.LogInformation($"Application commands module has finished the startup.");
             /*var guild_cmd_count = 0;
@@ -313,7 +315,7 @@ namespace DisCatSharp.Support
         /// <summary>
         /// Deregisters the events.
         /// </summary>
-        private static void DeregisterEvents()
+        private void DeregisterEvents()
 		{/*
             DiscordClient.Ready -= Client_Ready;
             DiscordClient.Resumed -= Client_Resumed;
@@ -335,7 +337,7 @@ namespace DisCatSharp.Support
             */
 			DiscordClient.Zombied -= Client_Zombied;
 			DiscordClient.MessageCreated -= MessageEvents.Client_MessageCreated;
-            DiscordClient.ComponentInteractionCreated -= InteractionEvents.InteractionCreated;
+            DiscordClient.ComponentInteractionCreated -= InteractionCreated;
 			/*
             DiscordClient.MessageReactionAdded -= Client_MessageReactionAdded;
 
@@ -410,11 +412,172 @@ namespace DisCatSharp.Support
             DiscordClient = null;
         }
 
-        /// <summary>
-        /// Centers the console.
-        /// </summary>
-        /// <param name="s">The text.</param>
-        public static void Center(string s)
+		public async Task InteractionCreated(DiscordClient sender, ComponentInteractionCreateEventArgs e)
+		{
+            List<string> reserverIds = new()
+            {
+				"role_select_section",
+				"role_select_topic"
+			};
+            if (reserverIds.Contains(e.Id))
+            {
+                // Ignore
+            }
+			#region Default ack
+			else if (e.Id == "ack")
+			{
+				await e.Interaction.CreateResponseAsync(InteractionResponseType.DeferredMessageUpdate);
+			}
+			#endregion
+			#region Rules
+			else if (e.Id == "dcs_rules")
+			{
+				await e.Interaction.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource, new() { IsEphemeral = true });
+				DiscordMember member = await e.Guild.GetMemberAsync(e.User.Id);
+				DiscordRole userRole = e.Guild.GetRole(1055218048879054879);
+				if (member.Roles.Contains(userRole))
+					await e.Interaction.CreateFollowupMessageAsync(new() { Content = "You already accepted our rules :heart:", IsEphemeral = true });
+				else
+				{
+					try
+					{
+						await member.GrantRoleAsync(userRole, "Rules accepted");
+					}
+					catch (Exception) { }
+
+					await e.Interaction.CreateFollowupMessageAsync(new() { Content = "Welcome to the DisCatSharp Server!\n\nBy accepting our rules, you are helping to create a positive and welcoming community for all members.\nWe hope you enjoy your time here and look forward to seeing you participate and engage with others.\n\nIf you have any questions or need any assistance, don't hesitate to reach out to the moderation team.\nHave a great time on the server!", IsEphemeral = true });
+				}
+			}
+			#endregion
+			#region Self Roles
+			else if (e.Id == "dcs_section_roles")
+			{
+				try
+				{
+					await e.Interaction.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource, new() { IsEphemeral = true });
+					_ = Task.Run(async () => await SectionRolesSelection(sender, e));
+				}
+				catch (Exception) { }
+			}
+			else if (e.Id == "dcs_topic_roles")
+			{
+				try
+				{
+					await e.Interaction.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource, new() { IsEphemeral = true });
+					_ = Task.Run(async () => await TopicRolesSelection(sender, e));
+				}
+				catch (Exception) { }
+			}
+			#endregion
+            else
+            {
+                try
+                {
+                    await e.Interaction.CreateResponseAsync(InteractionResponseType.DeferredMessageUpdate);
+                }
+                catch (ServerErrorException) { }
+                catch (NotFoundException) { }
+            }
+		}
+
+		private async Task SectionRolesSelection(DiscordClient sender, ComponentInteractionCreateEventArgs e)
+		{
+			var member = await e.Guild.GetMemberAsync(e.User.Id);
+			var sectionRoleVoice = e.Guild.GetRole(1055229183778897930);
+			var sectionRoleFun = e.Guild.GetRole(1055217305178624190);
+			var sectionRoleGaming = e.Guild.GetRole(1055217530190450719);
+			var sectionRoleAutomatedFeeds = e.Guild.GetRole(1055217612314918963);
+
+			List<DiscordRole> roles = new()
+			{
+				sectionRoleVoice,
+				sectionRoleFun,
+				sectionRoleGaming,
+				sectionRoleAutomatedFeeds
+			};
+
+			List<DiscordStringSelectComponentOption> options = new(roles.Count);
+			foreach (var role in roles)
+			{
+				options.Add(new DiscordStringSelectComponentOption(role.Name, role.Id.ToString(), null, member.RoleIds.Any(x => x == role.Id), null));
+			}
+			var select = new DiscordStringSelectComponent("Section Roles", options, "role_select_section", 0, roles.Count, false);
+
+			var msg = await e.Interaction.EditOriginalResponseAsync(new DiscordWebhookBuilder().AddComponents(select));
+
+			_ = Task.Run(async () => await SelectionWaiter(sender, e, select.CustomId, member, msg, roles));
+		}
+
+		private async Task TopicRolesSelection(DiscordClient sender, ComponentInteractionCreateEventArgs e)
+		{
+			var member = await e.Guild.GetMemberAsync(e.User.Id);
+			var topipRoleWeebs = e.Guild.GetRole(1055217787070599218);
+			var topicRoleCats = e.Guild.GetRole(1055217928380882984);
+			var topicRoleDatamine = e.Guild.GetRole(1055217780535865405);
+
+			List<DiscordRole> roles = new()
+			{
+				topipRoleWeebs,
+				topicRoleCats,
+				topicRoleDatamine
+			};
+
+			List<DiscordStringSelectComponentOption> options = new(roles.Count);
+			foreach (var role in roles)
+			{
+				options.Add(new DiscordStringSelectComponentOption(role.Name, role.Id.ToString(), null, member.RoleIds.Any(x => x == role.Id), null));
+			}
+			var select = new DiscordStringSelectComponent("Topic Roles", options, "role_select_topic", 0, roles.Count, false);
+
+			var msg = await e.Interaction.EditOriginalResponseAsync(new DiscordWebhookBuilder().AddComponents(select));
+
+			_ = Task.Run(async () => await SelectionWaiter(sender, e, select.CustomId, member, msg, roles));
+		}
+
+		private async Task SelectionWaiter(DiscordClient sender, ComponentInteractionCreateEventArgs e, string customId, DiscordMember member, DiscordMessage msg, List<DiscordRole> roles)
+		{
+			var interactivity = await sender.GetInteractivity().WaitForSelectAsync(msg, customId, ComponentType.StringSelect, TimeSpan.FromSeconds(30));
+
+			if (interactivity.TimedOut)
+				await e.Interaction.DeleteOriginalResponseAsync();
+			else
+			{
+				var result = interactivity.Result;
+				await result.Interaction.CreateResponseAsync(InteractionResponseType.DeferredMessageUpdate);
+				List<DiscordRole>? toAssign = result.Values.Any() ? result.Values.Select(x => e.Guild.GetRole(Convert.ToUInt64(x))).ToList() : null;
+				List<DiscordRole>? toRemove = !result.Values.Any() || result.Values.Length == roles.Count ? null : new List<DiscordRole>();
+				if (toRemove != null)
+					foreach (var role in roles)
+						if (!toAssign.Contains(role))
+							toRemove.Add(role);
+				if (toRemove != null && toRemove.Any())
+					foreach (var role in toRemove)
+						await member.RevokeRoleAsync(role, "Self role opt-out");
+				if (toAssign != null && toAssign.Any())
+					foreach (var role in toAssign)
+						await member.GrantRoleAsync(role, "Self role opt-in");
+
+				string finalResult = "**Assigned roles:**";
+				if (toAssign != null && toAssign.Any())
+					foreach (var role in toAssign)
+						finalResult += $"\n- {role.Name}";
+				else
+					finalResult += "\n_None_";
+				finalResult += "\n\n**Removed roles:**";
+				if (toRemove != null && toRemove.Any())
+					foreach (var role in toRemove)
+						finalResult += $"\n- {role.Name}";
+				else
+					finalResult += "\n_None_";
+				await e.Interaction.EditOriginalResponseAsync(new DiscordWebhookBuilder().WithContent(finalResult));
+			}
+		}
+
+		/// <summary>
+		/// Centers the console.
+		/// </summary>
+		/// <param name="s">The text.</param>
+		public static void Center(string s)
         {
             try
             {
