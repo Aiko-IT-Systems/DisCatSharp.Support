@@ -11,21 +11,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Internals", "Internals", "{
 		.gitignore = .gitignore
 		CODE_OF_CONDUCT.md = CODE_OF_CONDUCT.md
 		CONTRIBUTING.md = CONTRIBUTING.md
-		LICENSE = LICENSE
+		LICENSE.md = LICENSE.md
 		README.md = README.md
 	EndProjectSection
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DisCatSharp", "..\DisCatSharp\DisCatSharp\DisCatSharp.csproj", "{00BFA2A7-E84D-497B-91D3-F701C1113BF6}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DisCatSharp.Common", "..\DisCatSharp\DisCatSharp.Common\DisCatSharp.Common.csproj", "{8F73D19F-30B6-464B-BC29-9E498CA08F2E}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DisCatSharp.CommandsNext", "..\DisCatSharp\DisCatSharp.CommandsNext\DisCatSharp.CommandsNext.csproj", "{430D99CC-ABD0-4527-97F3-20AA1B26E49A}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DisCatSharp.ApplicationCommands", "..\DisCatSharp\DisCatSharp.ApplicationCommands\DisCatSharp.ApplicationCommands.csproj", "{2CAB0B16-633F-49F4-B137-D1F700CA06AF}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DisCatSharp.Interactivity", "..\DisCatSharp\DisCatSharp.Interactivity\DisCatSharp.Interactivity.csproj", "{DD399015-1FD3-428F-80D0-5C359A26E00F}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DisCatSharp.Phabricator", "..\AITSYS.Phabricator\DisCatSharp.Phabricator\DisCatSharp.Phabricator.csproj", "{0885BF92-0D2F-40CC-9E91-C71C12CC0ECB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,30 +25,6 @@ Global
 		{4E8E533E-A6EF-4F19-BCDA-5AB620DA500C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4E8E533E-A6EF-4F19-BCDA-5AB620DA500C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4E8E533E-A6EF-4F19-BCDA-5AB620DA500C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{00BFA2A7-E84D-497B-91D3-F701C1113BF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{00BFA2A7-E84D-497B-91D3-F701C1113BF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{00BFA2A7-E84D-497B-91D3-F701C1113BF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{00BFA2A7-E84D-497B-91D3-F701C1113BF6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8F73D19F-30B6-464B-BC29-9E498CA08F2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8F73D19F-30B6-464B-BC29-9E498CA08F2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8F73D19F-30B6-464B-BC29-9E498CA08F2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8F73D19F-30B6-464B-BC29-9E498CA08F2E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{430D99CC-ABD0-4527-97F3-20AA1B26E49A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{430D99CC-ABD0-4527-97F3-20AA1B26E49A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{430D99CC-ABD0-4527-97F3-20AA1B26E49A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{430D99CC-ABD0-4527-97F3-20AA1B26E49A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2CAB0B16-633F-49F4-B137-D1F700CA06AF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2CAB0B16-633F-49F4-B137-D1F700CA06AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2CAB0B16-633F-49F4-B137-D1F700CA06AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2CAB0B16-633F-49F4-B137-D1F700CA06AF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DD399015-1FD3-428F-80D0-5C359A26E00F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DD399015-1FD3-428F-80D0-5C359A26E00F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DD399015-1FD3-428F-80D0-5C359A26E00F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DD399015-1FD3-428F-80D0-5C359A26E00F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0885BF92-0D2F-40CC-9E91-C71C12CC0ECB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0885BF92-0D2F-40CC-9E91-C71C12CC0ECB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0885BF92-0D2F-40CC-9E91-C71C12CC0ECB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0885BF92-0D2F-40CC-9E91-C71C12CC0ECB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
