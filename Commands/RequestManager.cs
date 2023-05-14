@@ -38,7 +38,7 @@ namespace DisCatSharp.Support.Commands
 			Option("module", "For which module do you want a new feature")] string module)
 		{
 
-			await ctx.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent($"Please take a look in my dm").AsEphemeral(true));
+			await ctx.CreateResponseAsync(InteractionResponseType.DeferredChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent($"Please take a look in my dm").AsEphemeral());
 			var chan = await ctx.Client.GetChannelAsync(1012470877784391800);
 			var thr = await chan.CreatePostAsync($"Request from {ctx.User.Mention}", new DiscordMessageBuilder().WithContent("Creating.."), reason: "Feature request creation");
 			var interactivity = ctx.Client.GetInteractivity();

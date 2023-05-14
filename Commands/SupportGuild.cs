@@ -27,7 +27,7 @@ namespace DisCatSharp.Support.Commands
 		[SlashCommand("bind", "Binds a user to an aitsys.dev account")]
 		public static async Task BindUser(InteractionContext ctx, [Option("user", "User to bind to a aitsys.dev account")] DiscordUser user, [Autocomplete(typeof(ConduitUserProvider)), Option("account", "aitsys.dev account", true)] string account)
 		{
-			await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent($"We want to map {user.UsernameWithDiscriminator} to {account}").AsEphemeral(true));
+			await ctx.CreateResponseAsync(InteractionResponseType.ChannelMessageWithSource, new DiscordInteractionResponseBuilder().WithContent($"We want to map {user.UsernameWithDiscriminator} to {account}").AsEphemeral());
 			var extconstraints = new Dictionary<string, dynamic>
 				{
 					{ "phids", new List<string>{ account } }
@@ -36,7 +36,7 @@ namespace DisCatSharp.Support.Commands
 			var data2 = JsonConvert.SerializeObject(tdata2);
 			Extended extuser = JsonConvert.DeserializeObject<Extended>(data2);
 
-			await ctx.FollowUpAsync(new DiscordFollowupMessageBuilder().WithContent($"User: {extuser.QResult.First().RealName}").AsEphemeral(true));
+			await ctx.FollowUpAsync(new DiscordFollowupMessageBuilder().WithContent($"User: {extuser.QResult.First().RealName}").AsEphemeral());
 
 			var transaction = new PhabricatorTransaction(account);
 			transaction.Transactions.Add(new TransactionObject("custom.discord", user.Id.ToString()));
@@ -48,12 +48,12 @@ namespace DisCatSharp.Support.Commands
 			}
 			catch (ConduitException ex)
 			{
-				await ctx.FollowUpAsync(new DiscordFollowupMessageBuilder().AsEphemeral(true).WithContent(ex.Message));
+				await ctx.FollowUpAsync(new DiscordFollowupMessageBuilder().AsEphemeral().WithContent(ex.Message));
 				return;
 			}
 			finally
 			{
-				await ctx.FollowUpAsync(new DiscordFollowupMessageBuilder().AsEphemeral(true).WithContent("Done"));
+				await ctx.FollowUpAsync(new DiscordFollowupMessageBuilder().AsEphemeral().WithContent("Done"));
 			}
 		}
 
