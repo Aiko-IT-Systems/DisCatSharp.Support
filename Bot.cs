@@ -161,9 +161,12 @@ namespace DisCatSharp.Support
 				MessageCacheSize = 2048,
 				MinimumLogLevel = LogLevel,
 				Intents = DiscordIntents.AllUnprivileged | DiscordIntents.GuildMembers | DiscordIntents.MessageContent,
-				UseCanary = true,
+				ApiChannel = ApiChannel.Canary,
 				ReconnectIndefinitely = true,
-				LoggerFactory = new LoggerFactory().AddSerilog(Log.Logger)
+				LoggerFactory = new LoggerFactory().AddSerilog(Log.Logger),
+				EnableSentry = true,
+				ReportMissingFields = true,
+				AttachUserInfo = true
 			};
 
 			CommandsNextConfiguration = new()
