@@ -209,7 +209,6 @@ namespace DisCatSharp.Support
 				DebugStartup = false,
 				EnableLocalization = false,
 				EnableDefaultHelp = false,
-				ManualOverride = false,
 				GenerateTranslationFilesOnly = false
 			};
 		}
