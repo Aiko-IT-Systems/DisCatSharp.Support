@@ -1,2 +1,2 @@
 # DisCatSharp.Support
-DisCatSharp Support Bot
+DisCatSharp Support App
